@@ -1,0 +1,85 @@
+.page-container {
+  font-family: Arial, sans-serif;
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+
+.header {
+  background-color: #e9ecef;
+  padding: 20px;
+  text-align: center;
+  border-bottom: 3px solid #007bff;
+}
+
+.header-title {
+  margin: 0;
+  font-size: 32px;
+  color: #333;
+  font-weight: bold;
+}
+
+.content-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.banner img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border: 2px solid #ddd;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0 15px;
+}
+
+.more-btn {
+  text-decoration: none;
+  background-color: #007bff;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.rides-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.ride-card {
+  border: 2px solid #ddd;
+  background-color: #fff;
+}
+
+.ride-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.ride-content {
+  padding: 15px;
+}
+
+.status-open {
+  color: green;
+  font-weight: bold;
+}
+
+.status-closed {
+  color: red;
+  font-weight: bold;
+}
+
+.status-maintenance {
+  color: orange;
+  font-weight: bold;
+}
