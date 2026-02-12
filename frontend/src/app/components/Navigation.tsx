@@ -1,54 +1,37 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import "../../styles/navigation.css";
 
 export function Navigation() {
   const user = localStorage.getItem("user");
+  const navigate = useNavigate();
 
   return (
-    <nav style={{
-      backgroundColor: '#f8f9fa',
-      padding: '10px 0',
-      borderBottom: '2px solid #ddd',
-      marginBottom: '20px'
-    }}>
-      <div style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '30px',
-        fontFamily: 'Arial, sans-serif'
-      }}>
-        <Link to="/" style={linkStyle}>Home</Link>
-        <span>|</span>
+    <nav className="navbar">
+      <div className="nav-container">
 
-        <Link to="/rides" style={linkStyle}>Rides</Link>
-        <span>|</span>
+        {/* Logo */}
+        <div className="logo-section" onClick={() => navigate("/")}>
+          <img src="/assets/logo.png" alt="FunSion" className="logo-img" />
+          <span className="logo-text">FunSion</span>
+        </div>
 
-        <Link to="/tickets" style={linkStyle}>Tickets</Link>
-        <span>|</span>
+        {/* Links */}
+        <div className="nav-links">
+          <Link to="/">Home</Link>
+          <Link to="/rides">Rides</Link>
+          <Link to="/tickets">Tickets</Link>
+          <Link to="/queue">Queue</Link>
+          <Link to="/food">Food</Link>
+          <Link to="/contact">Contact</Link>
 
-        <Link to="/queue" style={linkStyle}>Queue</Link>
-        <span>|</span>
-
-        <Link to="/food" style={linkStyle}>Food</Link>
-        <span>|</span>
-
-        <Link to="/contact" style={linkStyle}>Contact</Link>
-        <span>|</span>
-
-        {user ? (
-  <Link to="/profile" style={linkStyle}>Profile</Link>
-) : (
-  <Link to="/login" style={linkStyle}>Login</Link>
-)}
+          {user ? (
+            <Link to="/profile" className="profile-btn">Profile</Link>
+          ) : (
+            <Link to="/login" className="login-btn">Login</Link>
+          )}
+        </div>
 
       </div>
     </nav>
   );
 }
-
-const linkStyle = {
-  color: '#333',
-  textDecoration: 'none',
-  padding: '5px 15px'
-};

@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { Navigation } from "../components/Navigation";
 import { Footer } from "../components/Footer";
 import "../../styles/Home.css";
+import { Banner } from "../components/Banner";
+
 
 interface Ride {
   ride_id: number;
@@ -38,21 +40,15 @@ export function Home() {
   return (
     <div className="page-container">
 
-      <div className="header">
-        <h1 className="header-title">FunFusion</h1>
-      </div>
+      
 
       <Navigation />
 
       <div className="content-container">
 
-        {/* Banner */}
-        <div className="banner">
-          <img
-            src="https://images.unsplash.com/photo-1761242606389-0a45db29fdee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080"
-            alt="Theme Park"
-          />
-        </div>
+     {/* Banner */}
+<Banner />
+
 
         {/* Rides Section */}
         <div className="section-header">

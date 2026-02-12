@@ -1,0 +1,123 @@
+/* Navbar Glass Gradient */
+.navbar {
+  background: linear-gradient(120deg, #1e3c72cc, #2a5298cc);
+  backdrop-filter: blur(12px);
+  padding: 14px 20px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* Container */
+.nav-container {
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Logo Section */
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.logo-section:hover {
+  transform: scale(1.05);
+}
+
+.logo-img {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+}
+
+.logo-text {
+  font-size: 22px;
+  font-weight: bold;
+  color: white;
+  letter-spacing: 1px;
+}
+
+/* Links */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  position: relative;
+  transition: 0.3s;
+  padding: 4px 0;
+}
+
+/* Animated underline */
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  bottom: -3px;
+  left: 0;
+  background: #00eaff;
+  transition: 0.3s ease;
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+/* Glow hover */
+.nav-links a:hover {
+  color: #00eaff;
+}
+
+/* Buttons */
+.login-btn {
+  background: linear-gradient(45deg, #00c6ff, #0072ff);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+}
+
+.profile-btn {
+  background: linear-gradient(45deg, #00e676, #00c853);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.profile-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-container {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+  }
+}

@@ -1,80 +1,36 @@
-/* Full screen height */
-html, body, #root {
-  height: 100%;
-  margin: 0;
+/* Extra spacing improvements */
+
+.login-card {
+  padding: 2.5rem;
 }
 
-/* Background */
-.background {
-  min-height: 100vh;
-  width: 100%;
-
-  background: url("/assets/login_back.jpg") no-repeat center center;
-  background-size: cover;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Login box */
-.login-container {
-  width: 350px;
-  padding: 25px;
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 10px;
-  text-align: center;
-  backdrop-filter: blur(6px);
-}
-
-/* Title */
 .login-title {
-  color: white;
-  margin-bottom: 15px;
+  margin-bottom: 2rem;
 }
 
-/* Form width */
-.login-container form {
-  width: 100%;
+.login-field {
+  margin-bottom: 1.25rem;
 }
 
-/* Inputs */
-.login-input {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 5px;
-  border: none;
-  outline: none;
-  box-sizing: border-box;
-}
-
-/* Button */
 .login-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #00bcd4;
-  border: none;
-  border-radius: 5px;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 10px;
+  margin-top: 0.5rem;
 }
 
-.login-button:hover {
-  background-color: #0097a7;
+.login-footer {
+  margin-top: 1.5rem;
 }
 
-/* Signup text */
-.signup-text {
-  margin-top: 15px;
-  font-size: 14px;
-  color: white;
-}
+/* Responsive spacing */
+@media (min-width: 640px) {
+  .login-card {
+    padding: 3rem;
+  }
 
-.signup-link {
-  color: #00d4ff;
-  text-decoration: none;
-  font-weight: bold;
+  .login-title {
+    margin-bottom: 2.5rem;
+  }
+
+  .login-field {
+    margin-bottom: 1.5rem;
+  }
 }
