@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import "../../styles/ride.css";
+import { Navigation } from "../components/Navigation";
+import { Footer } from "../components/Footer";
 
 interface Ride {
   ride_id: number;
@@ -10,10 +13,12 @@ interface Ride {
   waiting_time: number;
   status: string;
   image: string;
+  gif?: string;
 }
 
 export function Rides() {
   const [rides, setRides] = useState<Ride[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchRides();
@@ -28,80 +33,59 @@ export function Rides() {
     }
   };
 
-  /* Status color function */
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Open":
-        return "green";
-      case "Closed":
-        return "red";
-      case "Maintenance":
-        return "orange";
-      default:
-        return "black";
-    }
+  const getStatusClass = (status: string) => {
+    if (status === "Open") return "status-open";
+    if (status === "Closed") return "status-closed";
+    if (status === "Maintenance") return "status-maintenance";
+    return "";
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-
+    <div className="rides-container">
+<Navigation />
       {/* Back Button */}
       <Link to="/">
-        <button
-          style={{
-            marginBottom: "15px",
-            padding: "8px 15px",
-            backgroundColor: "#007bff",
-            border: "none",
-            color: "white",
-            borderRadius: "5px",
-            cursor: "pointer"
-          }}
-        >
-          ← Back to Home
-        </button>
+        <button className="back-btn">← Back to Home</button>
       </Link>
 
-      <h2>Available Rides</h2>
+      <h2 className="rides-title">Available Rides</h2>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+      <div className="rides-grid">
         {rides.map((ride) => (
-          <div
-            key={ride.ride_id}
-            style={{
-              border: "1px solid #ddd",
-              padding: "15px",
-              width: "250px",
-              borderRadius: "10px",
-              backgroundColor: "#fff"
-            }}
-          >
-            <img
-              src={ride.image}
-              alt={ride.ride_name}
-              style={{ width: "100%", height: "150px", objectFit: "cover" }}
-            />
+          <div key={ride.ride_id} className="ride-card">
 
-            <h3>{ride.ride_name}</h3>
-            <p>{ride.description}</p>
-            <p>Capacity: {ride.capacity}</p>
-            <p>Waiting Time: {ride.waiting_time} mins</p>
+            {/* Image + GIF + Book */}
+            <div className="ride-image-wrapper">
+              <img src={ride.image} alt={ride.ride_name} className="ride-image" />
 
-            <p>
-              Status:{" "}
-              <span
-                style={{
-                  color: getStatusColor(ride.status),
-                  fontWeight: "bold"
-                }}
+              {ride.gif && (
+                <img src={ride.gif} alt="gif" className="ride-gif" />
+              )}
+
+              <button
+                className="book-btn"
+                onClick={() => navigate("/tickets")}
               >
+                Book Ride
+              </button>
+            </div>
+
+            {/* Info */}
+            <div className="ride-info">
+              <h3>{ride.ride_name}</h3>
+              <p>{ride.description}</p>
+              <p>Capacity: {ride.capacity}</p>
+              <p>Waiting Time: {ride.waiting_time} mins</p>
+
+              <span className={`status-badge ${getStatusClass(ride.status)}`}>
                 {ride.status}
               </span>
-            </p>
+            </div>
 
           </div>
         ))}
       </div>
+      <Footer />
     </div>
   );
 }

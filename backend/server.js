@@ -14,4 +14,9 @@ app.use("/api/rides", require("./routes/rideRoute"));
 app.use("/api/booking", require("./routes/bookingRoute"));
 
 
+
+app.use("/api/food", require("./routes/foodRoutes"));
+
+
+
 app.listen(5000, () => console.log("Server running on port 5000"));

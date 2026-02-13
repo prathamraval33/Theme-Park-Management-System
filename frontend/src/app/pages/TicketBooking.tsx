@@ -1,206 +1,157 @@
-import { useState } from 'react';
-import { Navigation } from '@/app/components/Navigation';
-import { Footer } from '@/app/components/Footer';
+import { useState } from "react";
+import axios from "axios";
+import { Navigation } from "../components/Navigation";
+import { Footer } from "../components/Footer";
+import "../../styles/ticket.css";
 
 export function TicketBooking() {
-  const [visitDate, setVisitDate] = useState('');
-  const [ticketType, setTicketType] = useState('Adult');
+  
+  const [visitDate, setVisitDate] = useState("");
+  const [ticketType, setTicketType] = useState("Adult");
   const [quantity, setQuantity] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [qrCode, setQrCode] = useState("");
 
-  const prices = {
+  const prices: { [key: string]: number } = {
     Adult: 1200,
     Child: 800,
-    VIP: 2500
+    VIP: 2500,
   };
 
-  const totalPrice = prices[ticketType as keyof typeof prices] * quantity;
+  const totalPrice = prices[ticketType] * quantity;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert('Ticket booked successfully! (Demo)');
+
+    const userData = localStorage.getItem("user");
+    const user = userData ? JSON.parse(userData) : null;
+
+    if (!user) {
+      alert("Please login first");
+      return;
+    }
+
+    if (!visitDate) {
+      alert("Please select visit date");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/booking/create", {
+        user_id: user.user_id,
+        booking_date: visitDate,
+        ticket_quantity: quantity,
+        total_amount: totalPrice,
+        payment_status: "Paid"
+      });
+
+      // Save QR code from backend
+      setQrCode(response.data.qr_code);
+
+      alert("Ticket booked successfully!");
+
+      // Reset form
+      setVisitDate("");
+      setTicketType("Adult");
+      setQuantity(1);
+
+    } catch (error) {
+      console.error(error);
+      alert("Booking failed");
+    }
+
+    setLoading(false);
   };
 
   return (
-    <div style={{
-      fontFamily: 'Arial, sans-serif',
-      backgroundColor: '#ffffff',
-      minHeight: '100vh'
-    }}>
-      <div style={{
-        backgroundColor: '#e9ecef',
-        padding: '20px',
-        textAlign: 'center',
-        borderBottom: '3px solid #007bff'
-      }}>
-        <h1 style={{
-          margin: '0',
-          fontSize: '32px',
-          color: '#333',
-          fontWeight: 'bold'
-        }}>
-          Theme Park Management System
-        </h1>
-      </div>
-
+    <div className="ticket-page">
       <Navigation />
 
-      <div style={{
-        maxWidth: '800px',
-        margin: '40px auto',
-        padding: '20px'
-      }}>
-        <h2 style={{ color: '#333', marginBottom: '20px' }}>
-          Book Your Tickets
-        </h2>
+      <div className="ticket-container">
+        <h2 className="ticket-title">Book Your Tickets</h2>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-          <div style={{
-            backgroundColor: '#f8f9fa',
-            padding: '30px',
-            border: '1px solid #ddd'
-          }}>
-            <h3 style={{ marginTop: '0', color: '#333' }}>Ticket Details</h3>
+        <div className="ticket-grid">
 
-            <form onSubmit={handleSubmit}>
-              <div style={{ marginBottom: '15px' }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '5px',
-                  color: '#333',
-                  fontSize: '14px'
-                }}>
-                  Visit Date
-                </label>
-                <input
-                  type="date"
-                  value={visitDate}
-                  onChange={(e) => setVisitDate(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '8px',
-                    border: '1px solid #ddd',
-                    fontSize: '14px',
-                    boxSizing: 'border-box'
-                  }}
-                  required
-                />
-              </div>
+          {/* Ticket Form */}
+          <div className="ticket-box">
+            <h3>Ticket Details</h3>
 
-              <div style={{ marginBottom: '15px' }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '5px',
-                  color: '#333',
-                  fontSize: '14px'
-                }}>
-                  Ticket Type
-                </label>
-                <select
-                  value={ticketType}
-                  onChange={(e) => setTicketType(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '8px',
-                    border: '1px solid #ddd',
-                    fontSize: '14px',
-                    boxSizing: 'border-box'
-                  }}
-                >
-                  <option value="Adult">Adult - ₹1200</option>
-                  <option value="Child">Child - ₹800</option>
-                  <option value="VIP">VIP - ₹2500</option>
-                </select>
-              </div>
+            <form onSubmit={handleSubmit} className="ticket-form">
 
-              <div style={{ marginBottom: '15px' }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '5px',
-                  color: '#333',
-                  fontSize: '14px'
-                }}>
-                  Quantity
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  max="10"
-                  value={quantity}
-                  onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                  style={{
-                    width: '100%',
-                    padding: '8px',
-                    border: '1px solid #ddd',
-                    fontSize: '14px',
-                    boxSizing: 'border-box'
-                  }}
-                  required
-                />
-              </div>
+              <label>Visit Date</label>
+              <input
+                type="date"
+                value={visitDate}
+                onChange={(e) => setVisitDate(e.target.value)}
+                required
+              />
 
-              <div style={{
-                backgroundColor: '#fff',
-                padding: '15px',
-                border: '1px solid #ddd',
-                marginBottom: '20px'
-              }}>
-                <strong style={{ fontSize: '18px', color: '#333' }}>
-                  Total Price: ₹{totalPrice}
-                </strong>
+              <label>Ticket Type</label>
+              <select
+                value={ticketType}
+                onChange={(e) => setTicketType(e.target.value)}
+              >
+                <option value="Adult">Adult - ₹1200</option>
+                <option value="Child">Child - ₹800</option>
+                <option value="VIP">VIP - ₹2500</option>
+              </select>
+
+              <label>Quantity</label>
+              <input
+                type="number"
+                min="1"
+                max="10"
+                value={quantity}
+                onChange={(e) =>
+                  setQuantity(parseInt(e.target.value) || 1)
+                }
+                required
+              />
+
+              <div className="total-box">
+                Total Price: ₹{totalPrice}
               </div>
 
               <button
                 type="submit"
+                disabled={loading}
                 style={{
-                  width: '100%',
-                  backgroundColor: '#28a745',
-                  color: 'white',
-                  padding: '12px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '16px'
+                  background: "#ff7a18",
+                  color: "white",
+                  padding: "14px",
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                  border: "none",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  width: "100%"
                 }}
               >
-                Book Ticket
+                {loading ? "Booking..." : "Book Ticket"}
               </button>
+
             </form>
           </div>
 
-          <div style={{
-            backgroundColor: '#f8f9fa',
-            padding: '30px',
-            border: '1px solid #ddd'
-          }}>
-            <h3 style={{ marginTop: '0', color: '#333' }}>QR Code Ticket</h3>
-            <div style={{
-              backgroundColor: '#fff',
-              padding: '30px',
-              textAlign: 'center',
-              border: '1px solid #ddd',
-              minHeight: '250px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <div>
-                <div style={{
-                  width: '150px',
-                  height: '150px',
-                  backgroundColor: '#ddd',
-                  margin: '0 auto 15px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  border: '2px solid #999'
-                }}>
-                  <span style={{ color: '#999', fontSize: '12px' }}>QR CODE</span>
-                </div>
-                <p style={{ margin: '0', fontSize: '13px', color: '#666' }}>
-                  Your QR ticket will appear here after booking
-                </p>
+          {/* QR Section */}
+          <div className="qr-box">
+            <h3>QR Code Ticket</h3>
+
+            {qrCode ? (
+              <img
+                src={qrCode}
+                alt="QR Code"
+                style={{ width: "180px", marginTop: "10px" }}
+              />
+            ) : (
+              <div className="qr-placeholder">
+                QR Code will appear here after booking
               </div>
-            </div>
+            )}
           </div>
+
         </div>
       </div>
 

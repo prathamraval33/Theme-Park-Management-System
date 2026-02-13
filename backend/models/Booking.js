@@ -1,13 +1,12 @@
 const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema({
-  user_id: String,
-  ride_id: String,
-  booking_date: Date,
+  user_id: String,   
+  booking_date: String,
   ticket_quantity: Number,
   total_amount: Number,
-  qr_code: String,
-  payment_status: String
+  payment_status: String,
+  qr_code: String
 });
 
 module.exports = mongoose.model("Booking", bookingSchema);
