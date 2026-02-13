@@ -1,36 +1,118 @@
-/* Extra spacing improvements */
+/* Page background */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url("/assets/login_back.jpg") no-repeat center center/cover;
+  padding: 20px;
+}
 
+/* Glass card */
 .login-card {
-  padding: 2.5rem;
+  width: 100%;
+  max-width: 400px;
+  padding: 35px;
+  border-radius: 22px;
+
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 200, 150, 0.35);
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  text-align: center;
 }
 
+/* Title */
 .login-title {
-  margin-bottom: 2rem;
+  color: white;
+  margin-bottom: 25px;
+  font-size: 26px;
+  font-weight: bold;
 }
 
-.login-field {
-  margin-bottom: 1.25rem;
+/* Form layout */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
+/* Inputs and dropdown */
+.login-input,
+.login-select {
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,200,150,0.4);
+  background: rgba(255,255,255,0.15);
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s ease;
+}
+
+/* Placeholder color */
+.login-input::placeholder {
+  color: rgba(255,255,255,0.75);
+}
+
+/* Focus effect with orange glow */
+.login-input:focus,
+.login-select:focus {
+  border-color: #ff7e5f;
+  box-shadow: 0 0 12px rgba(255,126,95,0.6);
+}
+
+/* Dropdown list */
+.login-select option {
+  background-color: #3a2a1d;
+  color: #fff;
+}
+
+/* Button with orange gradient */
 .login-button {
-  margin-top: 0.5rem;
+  padding: 12px;
+  border-radius: 18px;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+
+  background: linear-gradient(90deg, #ff7e5f, #feb47b);
+  transition: 0.3s ease;
 }
 
+/* Button hover */
+.login-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(255,126,95,0.45);
+}
+
+/* Footer text */
 .login-footer {
-  margin-top: 1.5rem;
+  margin-top: 18px;
+  color: white;
+  font-size: 14px;
 }
 
-/* Responsive spacing */
-@media (min-width: 640px) {
+/* Signup link */
+.login-footer a {
+  color: #ffb07c;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.login-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
   .login-card {
-    padding: 3rem;
+    padding: 25px;
   }
 
   .login-title {
-    margin-bottom: 2.5rem;
-  }
-
-  .login-field {
-    margin-bottom: 1.5rem;
+    font-size: 22px;
   }
 }

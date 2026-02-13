@@ -1,0 +1,107 @@
+/* Page Background - Single Orange Gradient */
+.ticket-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ff7a18, #ff9a3c);
+  padding-bottom: 40px;
+  font-family: Arial, sans-serif;
+}
+
+/* Container */
+.ticket-container {
+  width: 90%;
+  max-width: 1000px;
+  margin: 40px auto;
+}
+
+/* Title */
+.ticket-title {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 28px;
+  font-weight: bold;
+  color: white;
+}
+
+/* Grid Layout */
+.ticket-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+}
+
+/* Glass Cards */
+.ticket-box,
+.qr-box {
+  flex: 1 1 420px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  border-radius: 14px;
+  padding: 30px;
+  border: 1px solid rgba(255,255,255,0.3);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  color: white;
+}
+
+/* Form Layout */
+.ticket-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Inputs */
+.ticket-form input,
+.ticket-form select {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background: rgba(255,255,255,0.9);
+  color: black;
+  font-size: 14px;
+}
+
+/* Total Box */
+.total-box {
+  padding: 14px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: bold;
+  background: rgba(255,255,255,0.3);
+}
+
+/* Button */
+.book-btn {
+  padding: 14px;
+  font-size: 16px;
+  font-weight: bold;
+  background: linear-gradient(135deg, #ff7a18, #ff4e00);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.book-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* QR Placeholder */
+.qr-placeholder {
+  height: 220px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .ticket-grid {
+    flex-direction: column;
+  }
+}

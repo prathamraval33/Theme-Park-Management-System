@@ -1,37 +1,77 @@
-import { useNavigate } from "react-router-dom";
-import "../../styles/Profile.css";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import "../../styles/profile.css";
+
+interface Booking {
+  booking_date: string;
+  ticket_quantity: number;
+  total_amount: number;
+  payment_status: string;
+  qr_code: string;
+}
 
 export function Profile() {
-  const navigate = useNavigate();
+  const [bookings, setBookings] = useState<Booking[]>([]);
 
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const userData = localStorage.getItem("user");
+  const user = userData ? JSON.parse(userData) : null;
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    navigate("/login");
+  useEffect(() => {
+    if (user && user.user_id) {
+      fetchBookings();
+    }
+  }, []);
+
+  const fetchBookings = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/api/booking/user/${user.user_id}`
+      );
+      console.log("Bookings:", res.data); // debug
+      setBookings(res.data);
+    } catch (error) {
+      console.error("Error loading bookings", error);
+    }
   };
 
+  if (!user) {
+    return <p className="profile-message">Please login first.</p>;
+  }
+
   return (
-    <div className="profile-container">
+    <div className="profile-page">
+      <h2 className="profile-title">My Profile</h2>
+
       <div className="profile-card">
-
-        <h2>My Profile</h2>
-
-        <p><strong>Name:</strong> {user.name || "N/A"}</p>
-        <p><strong>Email:</strong> {user.email || "N/A"}</p>
-        <p><strong>Role:</strong> {user.role || "N/A"}</p>
-
-        <div className="profile-buttons">
-          <button onClick={() => navigate("/")} className="btn-home">
-            Back to Home
-          </button>
-
-          <button onClick={handleLogout} className="btn-logout">
-            Logout
-          </button>
-        </div>
-
+        <h3>Welcome, {user.name}</h3>
+        <p>Email: {user.email}</p>
+        <p>Role: {user.role}</p>
       </div>
+
+      <h2 className="ticket-title">My Tickets</h2>
+
+      {bookings.length === 0 ? (
+        <p className="profile-message">No bookings found.</p>
+      ) : (
+        bookings.map((booking, index) => (
+          <div key={index} className="ticket-card">
+            <div className="ticket-info">
+              <p><strong>Date:</strong> {booking.booking_date}</p>
+              <p><strong>Tickets:</strong> {booking.ticket_quantity}</p>
+              <p><strong>Total:</strong> ₹{booking.total_amount}</p>
+              <p><strong>Status:</strong> {booking.payment_status}</p>
+            </div>
+
+            {booking.qr_code && (
+              <img
+                src={booking.qr_code}
+                alt="QR Code"
+                className="qr-image"
+              />
+            )}
+          </div>
+        ))
+      )}
     </div>
   );
 }
