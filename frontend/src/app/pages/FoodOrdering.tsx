@@ -56,7 +56,6 @@ export function FoodOrdering() {
         </h1>
       </div>
 
-      <Navigation />
 
       <div style={{
         maxWidth: '1200px',
@@ -186,7 +185,6 @@ export function FoodOrdering() {
         </div>
       </div>
 
-      <Footer />
     </div>
   );
 }

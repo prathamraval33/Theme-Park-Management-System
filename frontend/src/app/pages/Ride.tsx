@@ -42,7 +42,7 @@ export function Rides() {
 
   return (
     <div className="rides-container">
-<Navigation />
+
       {/* Back Button */}
       <Link to="/">
         <button className="back-btn">← Back to Home</button>
@@ -85,7 +85,7 @@ export function Rides() {
           </div>
         ))}
       </div>
-      <Footer />
+
     </div>
   );
 }

@@ -4,12 +4,15 @@ import { useState } from "react";
 import "../../styles/Navigation.css";
 
 export function Navigation() {
-  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const userData = localStorage.getItem("user");
+  const user = userData ? JSON.parse(userData) : null;
+
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
   const logout = () => {
     localStorage.removeItem("user");
+    setOpen(false);
     navigate("/login");
   };
 
@@ -30,6 +33,11 @@ export function Navigation() {
           <Link to="/queue">Queue</Link>
           <Link to="/food">Food</Link>
           <Link to="/contact">Contact</Link>
+
+          {/* Role-based dashboard link */}
+          {user?.role === "Admin" && (
+            <Link to="/admin">Dashboard</Link>
+          )}
 
           {user ? (
             <div className="profile-wrapper">
@@ -59,7 +67,6 @@ export function Navigation() {
             </Link>
           )}
         </div>
-
       </div>
     </nav>
   );

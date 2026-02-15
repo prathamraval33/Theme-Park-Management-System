@@ -25,7 +25,6 @@ export function CustomerDashboard() {
         </h1>
       </div>
 
-      <Navigation />
 
       {/* Customer Menu */}
       <div style={{
@@ -218,7 +217,6 @@ export function CustomerDashboard() {
         </table>
       </div>
 
-      <Footer />
     </div>
   );
 }

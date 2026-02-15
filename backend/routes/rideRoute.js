@@ -1,4 +1,5 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const router = express.Router();
 const Ride = require("../models/Rides");
 
@@ -6,24 +7,78 @@ const Ride = require("../models/Rides");
 router.get("/", async (req, res) => {
   try {
     const rides = await Ride.find();
-    res.json(rides);
+    res.status(200).json(rides);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-/* Update ride status */
-router.put("/:id", async (req, res) => {
+/* Join Queue */
+router.put("/join/:id", async (req, res) => {
   try {
-    const { status } = req.body;
+    const { id } = req.params;
 
-    const updatedRide = await Ride.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true }
-    );
+    // Check valid MongoDB ID
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid Ride ID" });
+    }
 
-    res.json(updatedRide);
+    const ride = await Ride.findById(id);
+
+    if (!ride) {
+      return res.status(404).json({ message: "Ride not found" });
+    }
+
+    if (ride.status !== "Open") {
+      return res.status(400).json({ message: "Ride is not open" });
+    }
+
+    if (ride.currentQueue >= ride.capacity) {
+      return res.status(400).json({ message: "Ride queue is full" });
+    }
+
+    ride.currentQueue += 1;
+    await ride.save();
+
+    res.status(200).json({
+      message: "Joined queue successfully",
+      currentQueue: ride.currentQueue,
+      waitingTime: ride.currentQueue * ride.avgDuration
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+/* Leave Queue */
+router.put("/leave/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid Ride ID" });
+    }
+
+    const ride = await Ride.findById(id);
+
+    if (!ride) {
+      return res.status(404).json({ message: "Ride not found" });
+    }
+
+    if (ride.currentQueue <= 0) {
+      return res.status(400).json({ message: "Queue is already empty" });
+    }
+
+    ride.currentQueue -= 1;
+    await ride.save();
+
+    res.status(200).json({
+      message: "Left queue successfully",
+      currentQueue: ride.currentQueue,
+      waitingTime: ride.currentQueue * ride.avgDuration
+    });
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

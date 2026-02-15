@@ -105,3 +105,35 @@
     flex-direction: column;
   }
 }
+.book-btn {
+  background: #ff7a18;
+  color: white;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.book-btn:hover {
+  opacity: 0.9;
+}
+
+.error-msg {
+  color: red;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.success-msg {
+  color: green;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.qr-img {
+  width: 180px;
+  margin-top: 10px;
+}

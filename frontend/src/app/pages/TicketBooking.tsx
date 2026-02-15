@@ -1,16 +1,16 @@
 import { useState } from "react";
 import axios from "axios";
-import { Navigation } from "../components/Navigation";
-import { Footer } from "../components/Footer";
 import "../../styles/ticket.css";
 
 export function TicketBooking() {
-  
+
   const [visitDate, setVisitDate] = useState("");
   const [ticketType, setTicketType] = useState("Adult");
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [qrCode, setQrCode] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const prices: { [key: string]: number } = {
     Adult: 1200,
@@ -19,6 +19,7 @@ export function TicketBooking() {
   };
 
   const totalPrice = prices[ticketType] * quantity;
+  const today = new Date().toISOString().split("T")[0];
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,39 +28,40 @@ export function TicketBooking() {
     const user = userData ? JSON.parse(userData) : null;
 
     if (!user) {
-      alert("Please login first");
+      setError("Please login first");
       return;
     }
 
     if (!visitDate) {
-      alert("Please select visit date");
+      setError("Please select visit date");
       return;
     }
 
+    setError("");
+    setSuccess("");
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/booking/create", {
-        user_id: user.user_id,
-        booking_date: visitDate,
-        ticket_quantity: quantity,
-        total_amount: totalPrice,
-        payment_status: "Paid"
-      });
+      const response = await axios.post(
+        "http://localhost:5000/api/booking/create",
+        {
+          user_id: user.user_id,
+          booking_date: visitDate,
+          ticket_quantity: quantity,
+          total_amount: totalPrice,
+          payment_status: "Paid"
+        }
+      );
 
-      // Save QR code from backend
       setQrCode(response.data.qr_code);
+      setSuccess("Ticket booked successfully!");
 
-      alert("Ticket booked successfully!");
-
-      // Reset form
       setVisitDate("");
       setTicketType("Adult");
       setQuantity(1);
 
     } catch (error) {
-      console.error(error);
-      alert("Booking failed");
+      setError("Booking failed. Please try again.");
     }
 
     setLoading(false);
@@ -67,14 +69,14 @@ export function TicketBooking() {
 
   return (
     <div className="ticket-page">
-      <Navigation />
-
       <div className="ticket-container">
         <h2 className="ticket-title">Book Your Tickets</h2>
 
+        {error && <p className="error-msg">{error}</p>}
+        {success && <p className="success-msg">{success}</p>}
+
         <div className="ticket-grid">
 
-          {/* Ticket Form */}
           <div className="ticket-box">
             <h3>Ticket Details</h3>
 
@@ -83,6 +85,7 @@ export function TicketBooking() {
               <label>Visit Date</label>
               <input
                 type="date"
+                min={today}
                 value={visitDate}
                 onChange={(e) => setVisitDate(e.target.value)}
                 required
@@ -114,37 +117,18 @@ export function TicketBooking() {
                 Total Price: ₹{totalPrice}
               </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                style={{
-                  background: "#ff7a18",
-                  color: "white",
-                  padding: "14px",
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                  border: "none",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                  width: "100%"
-                }}
-              >
+              <button type="submit" disabled={loading} className="book-btn">
                 {loading ? "Booking..." : "Book Ticket"}
               </button>
 
             </form>
           </div>
 
-          {/* QR Section */}
           <div className="qr-box">
             <h3>QR Code Ticket</h3>
 
             {qrCode ? (
-              <img
-                src={qrCode}
-                alt="QR Code"
-                style={{ width: "180px", marginTop: "10px" }}
-              />
+              <img src={qrCode} alt="QR Code" className="qr-img" />
             ) : (
               <div className="qr-placeholder">
                 QR Code will appear here after booking
@@ -154,8 +138,6 @@ export function TicketBooking() {
 
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }

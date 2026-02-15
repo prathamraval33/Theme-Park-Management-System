@@ -1,5 +1,4 @@
-/* Page background */
-.login-page {
+.signup-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -8,8 +7,7 @@
   padding-top: 80px;
 }
 
-/* Glass card */
-.login-card {
+.signup-card {
   width: 100%;
   max-width: 400px;
   padding: 35px;
@@ -23,24 +21,20 @@
   text-align: center;
 }
 
-/* Title */
-.login-title {
+.signup-title {
   color: white;
   margin-bottom: 25px;
   font-size: 26px;
   font-weight: bold;
 }
 
-/* Form layout */
-.login-form {
+.signup-form {
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
 
-/* Inputs and dropdown */
-.login-input,
-.login-select {
+.signup-input {
   padding: 12px;
   border-radius: 16px;
   border: 1px solid rgba(255,200,150,0.4);
@@ -51,68 +45,43 @@
   transition: 0.3s ease;
 }
 
-/* Placeholder color */
-.login-input::placeholder {
+.signup-input::placeholder {
   color: rgba(255,255,255,0.75);
 }
 
-/* Focus effect with orange glow */
-.login-input:focus,
-.login-select:focus {
+.signup-input:focus {
   border-color: #ff7e5f;
   box-shadow: 0 0 12px rgba(255,126,95,0.6);
 }
 
-/* Dropdown list */
-.login-select option {
-  background-color: #3a2a1d;
-  color: #fff;
-}
-
-/* Button with orange gradient */
-.login-button {
+.signup-button {
   padding: 12px;
   border-radius: 18px;
   border: none;
   color: white;
   font-weight: bold;
   cursor: pointer;
-
   background: linear-gradient(90deg, #ff7e5f, #feb47b);
   transition: 0.3s ease;
 }
 
-/* Button hover */
-.login-button:hover {
+.signup-button:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 20px rgba(255,126,95,0.45);
 }
 
-/* Footer text */
-.login-footer {
+.signup-footer {
   margin-top: 18px;
   color: white;
   font-size: 14px;
 }
 
-/* Signup link */
-.login-footer a {
+.signup-footer a {
   color: #ffb07c;
   font-weight: bold;
   text-decoration: none;
 }
 
-.login-footer a:hover {
+.signup-footer a:hover {
   text-decoration: underline;
-}
-
-/* Responsive */
-@media (max-width: 480px) {
-  .login-card {
-    padding: 25px;
-  }
-
-  .login-title {
-    font-size: 22px;
-  }
 }

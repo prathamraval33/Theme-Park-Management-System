@@ -1,7 +1,7 @@
 import { useState, FormEvent } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import "../../styles/Login.css";
+import "../../styles/Signup.css";
 
 export function Signup() {
   const [name, setName] = useState<string>("");
@@ -9,34 +9,13 @@ export function Signup() {
   const [phone, setPhone] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [role, setRole] = useState<string>("Customer");
 
   const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const nameRegex = /^[A-Za-z\s]+$/;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,10}$/;
-
     if (!name || !email || !phone || !password || !confirmPassword) {
       alert("Please fill all fields");
-      return;
-    }
-
-    if (!nameRegex.test(name)) {
-      alert("Name must contain only alphabets");
-      return;
-    }
-
-    if (!emailRegex.test(email)) {
-      alert("Enter a valid email address");
-      return;
-    }
-
-    if (!passwordRegex.test(password)) {
-      alert(
-        "Password must be 8-10 characters and include uppercase, lowercase, number and special character"
-      );
       return;
     }
 
@@ -46,41 +25,40 @@ export function Signup() {
     }
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/signup", // corrected route
-        {
-          name,
-          email,
-          phone,
-          password
-        }
-      );
+      await axios.post("http://localhost:5000/api/auth/signup", {
+        name,
+        email,
+        phone,
+        password,
+        role
+      });
 
       alert("Signup Successful");
-      console.log(res.data);
 
       setName("");
       setEmail("");
       setPhone("");
       setPassword("");
       setConfirmPassword("");
+      setRole("Customer");
 
     } catch (error: any) {
       alert(error.response?.data?.message || "Signup Failed");
-      console.error(error);
     }
   };
 
   return (
-    <div className="background">
-      <div className="login-container">
-        <h2 style={{ color: "white" }}>Create Account</h2>
+    <div className="signup-page">
+      <div className="signup-card">
 
-        <form onSubmit={handleSignup}>
+        <h2 className="signup-title">Create Account</h2>
+
+        <form onSubmit={handleSignup} className="signup-form">
+
           <input
             type="text"
-            placeholder="User-Name"
-            className="login-input"
+            placeholder="User Name"
+            className="signup-input"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
@@ -88,7 +66,7 @@ export function Signup() {
           <input
             type="email"
             placeholder="Email Address"
-            className="login-input"
+            className="signup-input"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -96,15 +74,15 @@ export function Signup() {
           <input
             type="tel"
             placeholder="Phone Number"
-            className="login-input"
+            className="signup-input"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
           />
 
           <input
-            type="text"
+            type="password"
             placeholder="Password"
-            className="login-input"
+            className="signup-input"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -112,29 +90,33 @@ export function Signup() {
           <input
             type="password"
             placeholder="Confirm Password"
-            className="login-input"
+            className="signup-input"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
 
-          <button type="submit" className="login-button">
+          <select
+            className="signup-input"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+          >
+            <option value="Customer">Customer</option>
+            <option value="RideStaff">Ride Staff</option>
+            <option value="TicketStaff">Ticket Staff</option>
+            <option value="FoodStaff">Food Staff</option>
+            <option value="Admin">Admin</option>
+          </select>
+
+          <button type="submit" className="signup-button">
             Sign Up
           </button>
+
         </form>
 
-        <p style={{ marginTop: "15px", fontSize: "14px", color: "white" }}>
-          Already have an account?{" "}
-          <Link
-            to="/login"
-            style={{
-              color: "#00d4ff",
-              textDecoration: "none",
-              fontWeight: "bold"
-            }}
-          >
-            Login
-          </Link>
-        </p>
+        <div className="signup-footer">
+          Already have an account? <Link to="/login">Login</Link>
+        </div>
+
       </div>
     </div>
   );

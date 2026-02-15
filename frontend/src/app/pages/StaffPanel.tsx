@@ -28,7 +28,6 @@ export function StaffPanel() {
         </h1>
       </div>
 
-      <Navigation />
 
       {/* Staff Menu */}
       <div style={{
@@ -315,7 +314,6 @@ export function StaffPanel() {
         </table>
       </div>
 
-      <Footer />
     </div>
   );
 }

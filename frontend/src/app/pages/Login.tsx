@@ -6,22 +6,22 @@ import "../../styles/login.css";
 export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("");
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!email || !password || !role) {
-      alert("Please fill all fields");
+    if (!email || !password) {
+      setError("Please fill all fields");
       return;
     }
 
     try {
       const res = await axios.post(
         "http://localhost:5000/api/auth/login",
-        { email, password, role }
+        { email, password }
       );
 
       localStorage.setItem("user", JSON.stringify(res.data.user));
@@ -35,18 +35,18 @@ export function Login() {
       else navigate("/");
 
     } catch (error: any) {
-      alert(error.response?.data?.message || "Login Failed");
+      setError(error.response?.data?.message || "Login Failed");
     }
   };
 
   return (
     <div className="login-page">
       <div className="login-card">
-
         <h2 className="login-title">Theme Park Login</h2>
 
-        <form onSubmit={handleLogin} className="login-form">
+        {error && <p style={{ color: "red" }}>{error}</p>}
 
+        <form onSubmit={handleLogin} className="login-form">
           <input
             type="email"
             placeholder="Enter Email"
@@ -63,20 +63,6 @@ export function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <select
-  className="login-select"
-  value={role}
-  onChange={(e) => setRole(e.target.value)}
->
-  <option value="">Select Role</option>
-  <option value="Customer">Customer</option>
-  <option value="RideStaff">Ride Staff</option>
-  <option value="TicketStaff">Ticket Staff</option>
-  <option value="FoodStaff">Food Staff</option>
-  <option value="Admin">Admin</option>
-</select>
-
-
           <button type="submit" className="login-button">
             Login
           </button>
@@ -85,7 +71,6 @@ export function Login() {
         <p className="login-footer">
           Don’t have an account? <Link to="/signup">Sign up</Link>
         </p>
-
       </div>
     </div>
   );
