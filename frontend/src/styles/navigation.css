@@ -3,13 +3,7 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-
-  background: linear-gradient(
-    90deg,
-    #ff7a18,
-    #ff3c8e
-  );
-
+  background: linear-gradient(90deg, #ff7a18, #ff3c8e);
   box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
@@ -37,6 +31,7 @@
   display: flex;
   align-items: center;
   gap: 22px;
+  transition: 0.3s ease;
 }
 
 .nav-links a {
@@ -49,7 +44,14 @@
 
 .nav-links a:hover {
   color: #ffe0b3;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  text-shadow: 0 2px 8px rgba(255,255,255,0.4);
+}
+
+/* Active link */
+.nav-links a.active {
+  border-bottom: 2px solid white;
+  padding-bottom: 3px;
 }
 
 /* Login Button */
@@ -83,18 +85,16 @@
   color: #ffe0b3;
 }
 
-/* Dropdown */
+/* Dropdown - Glass Effect */
 .profile-dropdown {
   position: absolute;
   right: 0;
   top: 42px;
   width: 190px;
 
-  background: linear-gradient(
-    135deg,
-    #ff7a18,
-    #ff3c8e
-  );
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.3);
 
   border-radius: 12px;
   padding: 12px;

@@ -25,7 +25,6 @@ export function SuperAdmin() {
         </h1>
       </div>
 
-      <Navigation />
 
       {/* Super Admin Menu */}
       <div style={{
@@ -457,7 +456,6 @@ export function SuperAdmin() {
         </div>
       </div>
 
-      <Footer />
     </div>
   );
 }

@@ -6,17 +6,19 @@ import { Footer } from "../components/Footer";
 import "../../styles/Home.css";
 import { Banner } from "../components/Banner";
 
-
 interface Ride {
+  _id: string;
   ride_id: number;
   ride_name: string;
-  waiting_time: number;
+  avgDuration: number;
+  currentQueue: number;
   status: string;
   image: string;
 }
 
 export function Home() {
   const [rides, setRides] = useState<Ride[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchRides();
@@ -28,6 +30,25 @@ export function Home() {
       setRides(res.data.slice(0, 4));
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const joinQueue = async (id: string) => {
+    try {
+      await axios.put(`http://localhost:5000/api/rides/join/${id}`);
+      fetchRides(); // refresh updated queue
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const leaveQueue = async (id: string) => {
+    try {
+      await axios.put(`http://localhost:5000/api/rides/leave/${id}`);
+      fetchRides(); // refresh updated queue
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -37,18 +58,18 @@ export function Home() {
     return "status-closed";
   };
 
+  const getWaitColor = (wait: number) => {
+    if (wait < 10) return "green";
+    if (wait < 20) return "orange";
+    return "red";
+  };
+
   return (
     <div className="page-container">
 
-      
-
-      <Navigation />
-
       <div className="content-container">
-
-     {/* Banner */}
-<Banner />
-
+        {/* Banner */}
+        <Banner />
 
         {/* Rides Section */}
         <div className="section-header">
@@ -58,33 +79,68 @@ export function Home() {
           </Link>
         </div>
 
-        <div className="rides-grid">
-          {rides.map((ride) => (
-            <div key={ride.ride_id} className="ride-card">
-              <img src={ride.image} alt={ride.ride_name} />
+        {loading ? (
+          <p>Loading rides...</p>
+        ) : (
+          <div className="rides-grid">
+            {rides.map((ride) => {
+              const waitTime = ride.currentQueue * ride.avgDuration;
+
+              return (
+                <div key={ride._id} className="ride-card">
+                  <img
+                    src={`/assets/${ride.image}`}
+                    alt={ride.ride_name}
+                  />
+
+                  <div className="ride-content">
+                    <h4>{ride.ride_name}</h4>
+
+                    <p>
+                      <strong>Status:</strong>{" "}
+                      <span className={getStatusClass(ride.status)}>
+                        {ride.status}
+                      </span>
+                    </p>
+
+                    <p>
+                      <strong>People in Queue:</strong> {ride.currentQueue}
+                    </p>
+
+                    <p>
+                      <strong>Wait Time:</strong>{" "}
+                      <span style={{ color: getWaitColor(waitTime), fontWeight: "bold" }}>
+                        {waitTime} mins
+                      </span>
+                    </p>
 
 
-              <div className="ride-content">
-                <h4>{ride.ride_name}</h4>
+                    <div style={{ display: "flex", gap: "8px", marginTop: "10px" }}>
+                      <button
+                        className="join-btn"
+                        onClick={() => joinQueue(ride._id)}
+                        disabled={ride.status !== "Open"}
+                      >
+                        Join
+                      </button>
 
-                <p>
-                  <strong>Status:</strong>{" "}
-                  <span className={getStatusClass(ride.status)}>
-                    {ride.status}
-                  </span>
-                </p>
+                      <button
+                        className="leave-btn"
+                        onClick={() => leaveQueue(ride._id)}
+                        disabled={ride.status !== "Open" || ride.currentQueue === 0}
+                      >
+                        Leave
+                      </button>
+                    </div>
 
-                <p>
-                  <strong>Wait Time:</strong> {ride.waiting_time} mins
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      <Footer />
     </div>
   );
 }

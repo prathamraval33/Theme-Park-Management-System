@@ -24,7 +24,6 @@ export function Contact() {
         </h1>
       </div>
 
-      <Navigation />
 
       <div style={{
         maxWidth: '1200px',
@@ -260,7 +259,6 @@ export function Contact() {
         </div>
       </div>
 
-      <Footer />
     </div>
   );
 }

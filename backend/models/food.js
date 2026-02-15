@@ -1,37 +1,36 @@
 const mongoose = require("mongoose");
 
-const foodSchema = new mongoose.Schema({
-  food_id: {
-    type: Number,
-    unique: true
-  },
+const foodSchema = new mongoose.Schema(
+  {
+    food_name: {
+      type: String,
+      required: true,
+      trim: true
+    },
 
-  food_name: {
-    type: String,
-    required: true
-  },
+    description: {
+      type: String,
+      trim: true
+    },
 
-  description: {
-    type: String
-  },
+    price: {
+      type: Number,
+      required: true,
+      min: 1
+    },
 
-  price: {
-    type: Number,
-    required: true
-  },
+    category: {
+      type: String,
+      enum: ["Snacks", "Drinks", "Meals", "Dessert"]
+    },
 
-  category: {
-    type: String
+    image: {
+      type: String
+    }
   },
-
-  image: {
-    type: String   // store image path or URL
-  },
-
-  created_at: {
-    type: Date,
-    default: Date.now
+  {
+    timestamps: true
   }
-});
+);
 
 module.exports = mongoose.model("Food", foodSchema);
