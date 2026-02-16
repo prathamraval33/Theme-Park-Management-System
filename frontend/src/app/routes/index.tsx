@@ -1,6 +1,7 @@
 import { createBrowserRouter, Outlet } from "react-router-dom";
 import { Navigation } from "../components/Navigation";
 import { Footer } from "../components/Footer";
+import { ProtectedRoute } from "../components/ProtectedRoute";
 
 import { Home } from "../pages/Home";
 import { Login } from "../pages/Login";
@@ -11,6 +12,7 @@ import { FoodOrdering } from "../pages/FoodOrdering";
 import { AdminDashboard } from "../pages/AdminDashboard";
 import { Contact } from "../pages/Contact";
 import { Rides } from "../pages/Ride";
+import { RideStaffDashboard } from "../pages/ridestaff/RideStaffDashboard";
 
 // Layout
 function MainLayout() {
@@ -32,12 +34,31 @@ export const router = createBrowserRouter([
       { path: "/tickets", Component: TicketBooking },
       { path: "/queue", Component: QueueStatus },
       { path: "/food", Component: FoodOrdering },
-      { path: "/admin", Component: AdminDashboard },
       { path: "/contact", Component: Contact },
+
+      // 🔐 Admin Only
+      {
+        path: "/admin",
+        element: (
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        ),
+      },
+
+      // 🔐 Ride Staff Only
+      {
+        path: "/ride-staff",
+        element: (
+          <ProtectedRoute allowedRoles={["RideStaff"]}>
+            <RideStaffDashboard />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
 
-  // 🔴 NO HEADER PAGES
+  // No layout pages
   { path: "/login", Component: Login },
   { path: "/signup", Component: Signup },
 ]);

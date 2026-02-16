@@ -16,6 +16,24 @@ export function Navigation() {
     navigate("/login");
   };
 
+  // 🔥 Decide dashboard route based on role
+  const getDashboardRoute = () => {
+    if (!user) return "/";
+
+    switch (user.role) {
+      case "Admin":
+        return "/admin";
+      case "RideStaff":
+        return "/ride-staff";
+      case "TicketStaff":
+        return "/ticket-staff";
+      case "FoodStaff":
+        return "/food-staff";
+      default:
+        return "/";
+    }
+  };
+
   return (
     <nav className="navbar">
       <div className="nav-container">
@@ -34,9 +52,9 @@ export function Navigation() {
           <Link to="/food">Food</Link>
           <Link to="/contact">Contact</Link>
 
-          {/* Role-based dashboard link */}
-          {user?.role === "Admin" && (
-            <Link to="/admin">Dashboard</Link>
+          {/* 🔥 Show dashboard only for staff/admin */}
+          {user && user.role !== "Customer" && (
+            <Link to={getDashboardRoute()}>Dashboard</Link>
           )}
 
           {user ? (
@@ -53,6 +71,10 @@ export function Navigation() {
 
                   <button onClick={() => navigate("/profile")}>
                     Profile
+                  </button>
+
+                  <button onClick={() => navigate(getDashboardRoute())}>
+                    Dashboard
                   </button>
 
                   <button onClick={logout}>
