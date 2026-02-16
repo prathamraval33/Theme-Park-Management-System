@@ -18,7 +18,8 @@ const userSchema = new mongoose.Schema(
 
     password: {
       type: String,
-      required: true
+      required: true,
+      minlength: 6
     },
 
     phone: {
@@ -37,5 +38,12 @@ const userSchema = new mongoose.Schema(
     timestamps: true
   }
 );
+
+// 🔒 Remove password when sending user data
+userSchema.methods.toJSON = function () {
+  const user = this.toObject();
+  delete user.password;
+  return user;
+};
 
 module.exports = mongoose.model("User", userSchema);

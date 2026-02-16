@@ -1,5 +1,5 @@
 import { useState, FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../styles/Signup.css";
 
@@ -9,41 +9,43 @@ export function Signup() {
   const [phone, setPhone] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [role, setRole] = useState<string>("Customer");
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const navigate = useNavigate();
 
   const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
 
-    if (!name || !email || !phone || !password || !confirmPassword) {
-      alert("Please fill all fields");
+    if (!name.trim() || !email.trim() || !phone.trim() || !password.trim()) {
+      setError("Please fill all fields");
       return;
     }
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
 
     try {
+      setLoading(true);
+
       await axios.post("http://localhost:5000/api/auth/signup", {
-        name,
-        email,
-        phone,
-        password,
-        role
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        password
       });
 
-      alert("Signup Successful");
+      alert("Signup Successful! Please login.");
 
-      setName("");
-      setEmail("");
-      setPhone("");
-      setPassword("");
-      setConfirmPassword("");
-      setRole("Customer");
+      navigate("/login");
 
     } catch (error: any) {
-      alert(error.response?.data?.message || "Signup Failed");
+      setError(error.response?.data?.message || "Signup Failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -53,11 +55,17 @@ export function Signup() {
 
         <h2 className="signup-title">Create Account</h2>
 
+        {error && (
+          <p style={{ color: "#ff4d4d", marginBottom: "10px" }}>
+            {error}
+          </p>
+        )}
+
         <form onSubmit={handleSignup} className="signup-form">
 
           <input
             type="text"
-            placeholder="User Name"
+            placeholder="Full Name"
             className="signup-input"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -95,20 +103,12 @@ export function Signup() {
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
 
-          <select
-            className="signup-input"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
+          <button
+            type="submit"
+            className="signup-button"
+            disabled={loading}
           >
-            <option value="Customer">Customer</option>
-            <option value="RideStaff">Ride Staff</option>
-            <option value="TicketStaff">Ticket Staff</option>
-            <option value="FoodStaff">Food Staff</option>
-            <option value="Admin">Admin</option>
-          </select>
-
-          <button type="submit" className="signup-button">
-            Sign Up
+            {loading ? "Creating Account..." : "Sign Up"}
           </button>
 
         </form>

@@ -8,7 +8,7 @@ const User = require("../models/User");
 =========================== */
 router.post("/signup", async (req, res) => {
   try {
-    const { name, email, phone, password, role } = req.body;
+    const { name, email, phone, password } = req.body;
 
     // 1️⃣ Validate required fields
     if (!name || !email || !phone || !password) {
@@ -17,7 +17,7 @@ router.post("/signup", async (req, res) => {
 
     const lowerEmail = email.toLowerCase();
 
-    // 2️⃣ Check if user already exists
+    // 2️⃣ Check existing user
     const existingUser = await User.findOne({ email: lowerEmail });
     if (existingUser) {
       return res.status(400).json({ message: "Email already exists" });
@@ -26,7 +26,7 @@ router.post("/signup", async (req, res) => {
     // 3️⃣ Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 4️⃣ Auto increment user_id (simple college approach)
+    // 4️⃣ Auto increment user_id (college-level simple logic)
     const count = await User.countDocuments();
 
     const newUser = new User({
@@ -35,19 +35,13 @@ router.post("/signup", async (req, res) => {
       email: lowerEmail,
       phone,
       password: hashedPassword,
-      role: role || "Customer" // Accept role from frontend
+      role: "Customer"   // ✅ Always customer from signup
     });
 
     await newUser.save();
 
     res.status(201).json({
-      message: "Signup successful",
-      user: {
-        user_id: newUser.user_id,
-        name: newUser.name,
-        email: newUser.email,
-        role: newUser.role
-      }
+      message: "Signup successful"
     });
 
   } catch (error) {
@@ -56,6 +50,7 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+
 /* ===========================
             LOGIN
 =========================== */
@@ -63,24 +58,28 @@ router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // 1️⃣ Validate fields
     if (!email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
     const lowerEmail = email.toLowerCase();
 
+    // 2️⃣ Find user by email ONLY
     const user = await User.findOne({ email: lowerEmail });
 
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
 
+    // 3️⃣ Check password
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid password" });
     }
 
+    // 4️⃣ Send role from DB automatically
     res.json({
       message: "Login successful",
       user: {
@@ -92,9 +91,18 @@ router.post("/login", async (req, res) => {
     });
 
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server Error" });
   }
 });
-
+// TEMP ROUTE - REMOVE BEFORE SUBMISSION
+router.get("/all-users", async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching users" });
+  }
+});
 
 module.exports = router;
