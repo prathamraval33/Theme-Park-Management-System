@@ -14,7 +14,6 @@ import { Contact } from "../pages/Contact";
 import { Rides } from "../pages/Ride";
 import { RideStaffDashboard } from "../pages/ridestaff/RideStaffDashboard";
 
-// Layout
 function MainLayout() {
   return (
     <>
@@ -27,18 +26,41 @@ function MainLayout() {
 
 export const router = createBrowserRouter([
   {
+    path: "/",
     element: <MainLayout />,
     children: [
-      { path: "/", Component: Home },
-      { path: "/rides", Component: Rides },
-      { path: "/tickets", Component: TicketBooking },
-      { path: "/queue", Component: QueueStatus },
-      { path: "/food", Component: FoodOrdering },
-      { path: "/contact", Component: Contact },
-
-      // 🔐 Admin Only
       {
-        path: "/admin",
+        index: true,      // 🔥 THIS is correct Home
+        element: <Home />,
+      },
+
+      {
+        path: "rides",
+        element: <Rides />,
+      },
+
+      {
+        path: "tickets",
+        element: <TicketBooking />,
+      },
+
+      {
+        path: "queue",
+        element: <QueueStatus />,
+      },
+
+      {
+        path: "food",
+        element: <FoodOrdering />,
+      },
+
+      {
+        path: "contact",
+        element: <Contact />,
+      },
+
+      {
+        path: "admin",
         element: (
           <ProtectedRoute allowedRoles={["Admin"]}>
             <AdminDashboard />
@@ -46,9 +68,8 @@ export const router = createBrowserRouter([
         ),
       },
 
-      // 🔐 Ride Staff Only
       {
-        path: "/ride-staff",
+        path: "ride-staff",
         element: (
           <ProtectedRoute allowedRoles={["RideStaff"]}>
             <RideStaffDashboard />
@@ -58,7 +79,13 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // No layout pages
-  { path: "/login", Component: Login },
-  { path: "/signup", Component: Signup },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+
+  {
+    path: "/signup",
+    element: <Signup />,
+  },
 ]);
