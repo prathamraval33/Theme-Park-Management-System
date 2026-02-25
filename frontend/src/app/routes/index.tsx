@@ -30,7 +30,7 @@ export const router = createBrowserRouter([
     element: <MainLayout />,
     children: [
       {
-        index: true,      // 🔥 THIS is correct Home
+        index: true,
         element: <Home />,
       },
 
@@ -39,8 +39,9 @@ export const router = createBrowserRouter([
         element: <Rides />,
       },
 
+      // ✅ UPDATED HERE (Dynamic ride ID)
       {
-        path: "tickets",
+        path: "tickets/:id",
         element: <TicketBooking />,
       },
 

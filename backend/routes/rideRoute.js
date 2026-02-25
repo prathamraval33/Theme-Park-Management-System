@@ -3,11 +3,33 @@ const mongoose = require("mongoose");
 const router = express.Router();
 const Ride = require("../models/Rides");
 
-/* Get all rides */
+/* Get ALL rides */
 router.get("/", async (req, res) => {
   try {
     const rides = await Ride.find();
     res.status(200).json(rides);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+/* Get SINGLE ride by ID */
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid Ride ID" });
+    }
+
+    const ride = await Ride.findById(id);
+
+    if (!ride) {
+      return res.status(404).json({ message: "Ride not found" });
+    }
+
+    res.status(200).json(ride);
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -18,7 +40,6 @@ router.put("/join/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Check valid MongoDB ID
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid Ride ID" });
     }

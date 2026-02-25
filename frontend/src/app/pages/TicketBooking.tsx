@@ -1,25 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import "../../styles/ticket.css";
 
-export function TicketBooking() {
+interface Ride {
+  _id: string;
+  ride_name: string;
+  price: number;
+}
 
+export function TicketBooking() {
+  const { id } = useParams(); // ride id from URL
+
+  const [ride, setRide] = useState<Ride | null>(null);
   const [visitDate, setVisitDate] = useState("");
-  const [ticketType, setTicketType] = useState("Adult");
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [qrCode, setQrCode] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const prices: { [key: string]: number } = {
-    Adult: 1200,
-    Child: 800,
-    VIP: 2500,
+  const today = new Date().toISOString().split("T")[0];
+
+  useEffect(() => {
+    if (id) fetchRide();
+  }, [id]);
+
+  const fetchRide = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/api/rides/${id}`
+      );
+      setRide(res.data);
+    } catch (error) {
+      console.error("Error fetching ride:", error);
+      setError("Ride not found");
+    }
   };
 
-  const totalPrice = prices[ticketType] * quantity;
-  const today = new Date().toISOString().split("T")[0];
+  const totalPrice = ride ? ride.price * quantity : 0;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,6 +56,11 @@ export function TicketBooking() {
       return;
     }
 
+    if (!ride) {
+      setError("Ride not available");
+      return;
+    }
+
     setError("");
     setSuccess("");
     setLoading(true);
@@ -45,7 +69,8 @@ export function TicketBooking() {
       const response = await axios.post(
         "http://localhost:5000/api/booking/create",
         {
-          user_id: user.user_id,
+          user_id: user._id, // ✅ FIXED HERE
+          ride_id: ride._id,
           booking_date: visitDate,
           ticket_quantity: quantity,
           total_amount: totalPrice,
@@ -57,20 +82,21 @@ export function TicketBooking() {
       setSuccess("Ticket booked successfully!");
 
       setVisitDate("");
-      setTicketType("Adult");
       setQuantity(1);
 
-    } catch (error) {
-      setError("Booking failed. Please try again.");
+    } catch (error: any) {
+      setError(error.response?.data?.message || "Booking failed");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
     <div className="ticket-page">
       <div className="ticket-container">
-        <h2 className="ticket-title">Book Your Tickets</h2>
+        <h2 className="ticket-title">
+          Book Ticket {ride && `for ${ride.ride_name}`}
+        </h2>
 
         {error && <p className="error-msg">{error}</p>}
         {success && <p className="success-msg">{success}</p>}
@@ -79,6 +105,12 @@ export function TicketBooking() {
 
           <div className="ticket-box">
             <h3>Ticket Details</h3>
+
+            {ride && (
+              <p style={{ fontWeight: "bold", marginBottom: "10px" }}>
+                Price per ticket: ₹{ride.price}
+              </p>
+            )}
 
             <form onSubmit={handleSubmit} className="ticket-form">
 
@@ -90,16 +122,6 @@ export function TicketBooking() {
                 onChange={(e) => setVisitDate(e.target.value)}
                 required
               />
-
-              <label>Ticket Type</label>
-              <select
-                value={ticketType}
-                onChange={(e) => setTicketType(e.target.value)}
-              >
-                <option value="Adult">Adult - ₹1200</option>
-                <option value="Child">Child - ₹800</option>
-                <option value="VIP">VIP - ₹2500</option>
-              </select>
 
               <label>Quantity</label>
               <input

@@ -2,12 +2,6 @@ const mongoose = require("mongoose");
 
 const rideSchema = new mongoose.Schema(
   {
-    ride_id: {
-      type: Number,
-      required: true,
-      unique: true
-    },
-
     ride_name: {
       type: String,
       required: true,
@@ -37,6 +31,12 @@ const rideSchema = new mongoose.Schema(
       min: 0
     },
 
+    price: {
+      type: Number,
+      required: true,
+      min: 0
+    },
+
     status: {
       type: String,
       enum: ["Open", "Closed", "Maintenance"],
@@ -49,7 +49,7 @@ const rideSchema = new mongoose.Schema(
     }
   },
   {
-    timestamps: true   // ⭐ Professional feature
+    timestamps: true
   }
 );
 

@@ -8,6 +8,12 @@ const bookingSchema = new mongoose.Schema(
       required: true
     },
 
+    ride_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Ride",
+      required: true
+    },
+
     booking_date: {
       type: Date,
       required: true
@@ -22,7 +28,7 @@ const bookingSchema = new mongoose.Schema(
     total_amount: {
       type: Number,
       required: true,
-      min: 1
+      min: 0
     },
 
     payment_status: {
