@@ -50,7 +50,6 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-
 /* ===========================
             LOGIN
 =========================== */
@@ -58,32 +57,29 @@ router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // 1️⃣ Validate fields
     if (!email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
     const lowerEmail = email.toLowerCase();
 
-    // 2️⃣ Find user by email ONLY
     const user = await User.findOne({ email: lowerEmail });
 
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
 
-    // 3️⃣ Check password
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid password" });
     }
 
-    // 4️⃣ Send role from DB automatically
+    // ✅ IMPORTANT CHANGE HERE
     res.json({
       message: "Login successful",
       user: {
-        user_id: user.user_id,
+        _id: user._id,          // ⭐ Mongo ObjectId
         name: user.name,
         email: user.email,
         role: user.role
@@ -95,6 +91,7 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 });
+
 // TEMP ROUTE - REMOVE BEFORE SUBMISSION
 router.get("/all-users", async (req, res) => {
   try {

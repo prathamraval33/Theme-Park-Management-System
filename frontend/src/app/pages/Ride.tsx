@@ -2,18 +2,17 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import "../../styles/ride.css";
-import { Navigation } from "../components/Navigation";
-import { Footer } from "../components/Footer";
 
 interface Ride {
-  ride_id: number;
+  _id: string;
   ride_name: string;
   description: string;
   capacity: number;
-  waiting_time: number;
+  avgDuration: number;
+  currentQueue: number;
+  price: number;
   status: string;
   image: string;
-  gif?: string;
 }
 
 export function Rides() {
@@ -43,7 +42,6 @@ export function Rides() {
   return (
     <div className="rides-container">
 
-      {/* Back Button */}
       <Link to="/">
         <button className="back-btn">← Back to Home</button>
       </Link>
@@ -52,32 +50,37 @@ export function Rides() {
 
       <div className="rides-grid">
         {rides.map((ride) => (
-          <div key={ride.ride_id} className="ride-card">
+          <div key={ride._id} className="ride-card">
 
-            {/* Image + GIF + Book */}
             <div className="ride-image-wrapper">
-              <img src={ride.image} alt={ride.ride_name} className="ride-image" />
-
-              {ride.gif && (
-                <img src={ride.gif} alt="gif" className="ride-gif" />
-              )}
+              <img
+                src={ride.image}
+                alt={ride.ride_name}
+                className="ride-image"
+              />
 
               <button
                 className="book-btn"
-                onClick={() => navigate("/tickets")}
+                onClick={() => navigate(`/tickets/${ride._id}`)}
               >
                 Book Ride
               </button>
             </div>
 
-            {/* Info */}
             <div className="ride-info">
               <h3>{ride.ride_name}</h3>
               <p>{ride.description}</p>
               <p>Capacity: {ride.capacity}</p>
-              <p>Waiting Time: {ride.waiting_time} mins</p>
+              <p>
+                Waiting Time: {ride.avgDuration * ride.currentQueue} mins
+              </p>
+              <p className="ride-price">
+                Price: ₹{ride.price}
+              </p>
 
-              <span className={`status-badge ${getStatusClass(ride.status)}`}>
+              <span
+                className={`status-badge ${getStatusClass(ride.status)}`}
+              >
                 {ride.status}
               </span>
             </div>
@@ -85,7 +88,6 @@ export function Rides() {
           </div>
         ))}
       </div>
-
     </div>
   );
 }

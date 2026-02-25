@@ -130,3 +130,9 @@
     font-size: 22px;
   }
 }
+
+.ride-price {
+  font-weight: bold;
+  color: #ff6600;
+  font-size: 18px;
+}
