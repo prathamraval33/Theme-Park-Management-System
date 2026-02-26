@@ -16,7 +16,6 @@ export function Navigation() {
     navigate("/login");
   };
 
-  // 🔥 Decide dashboard route based on role
   const getDashboardRoute = () => {
     if (!user) return "/";
 
@@ -38,12 +37,12 @@ export function Navigation() {
     <nav className="navbar">
       <div className="nav-container">
 
-        {/* Logo */}
+        {/* LOGO */}
         <Link to="/" className="nav-logo">
-          ThemePark
+          🎢 ThemePark
         </Link>
 
-        {/* Links */}
+        {/* LINKS */}
         <div className="nav-links">
           <Link to="/">Home</Link>
           <Link to="/rides">Rides</Link>
@@ -52,22 +51,23 @@ export function Navigation() {
           <Link to="/food">Food</Link>
           <Link to="/contact">Contact</Link>
 
-          {/* 🔥 Show dashboard only for staff/admin */}
           {user && user.role !== "Customer" && (
-            <Link to={getDashboardRoute()}>Dashboard</Link>
+            <Link to={getDashboardRoute()} className="dashboard-link">
+              Dashboard
+            </Link>
           )}
 
           {user ? (
             <div className="profile-wrapper">
               <FaUserCircle
-                size={28}
+                size={30}
                 className="profile-icon"
                 onClick={() => setOpen(!open)}
               />
 
               {open && (
                 <div className="profile-dropdown">
-                  <p className="profile-name">{user.name}</p>
+                  <p className="profile-name">👤 {user.name}</p>
 
                   <button onClick={() => navigate("/profile")}>
                     Profile
@@ -77,7 +77,7 @@ export function Navigation() {
                     Dashboard
                   </button>
 
-                  <button onClick={logout}>
+                  <button onClick={logout} className="logout-red">
                     Logout
                   </button>
                 </div>
