@@ -1,190 +1,282 @@
-import { useState } from 'react';
-import { Navigation } from '@/app/components/Navigation';
-import { Footer } from '@/app/components/Footer';
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 type FoodItem = {
-  name: string;
+  _id: string;
+  food_name: string;
+  price: number;
+  image: string;
+};
+
+type CartItem = {
+  _id: string;
+  food_name: string;
   price: number;
   quantity: number;
 };
 
 export function FoodOrdering() {
-  const [orderItems, setOrderItems] = useState<FoodItem[]>([]);
+  const [foods, setFoods] = useState<FoodItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const foodMenu = [
-    { name: 'Burger', price: 150, image: 'https://images.unsplash.com/photo-1688246780164-00c01647e78c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXJnZXIlMjBmb29kfGVufDF8fHx8MTc2OTA4MDAyN3ww&ixlib=rb-4.1.0&q=80&w=1080' },
-    { name: 'Pizza', price: 250, image: 'https://images.unsplash.com/photo-1703073186021-021fb5a0bde1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwaXp6YSUyMGZvb2R8ZW58MXx8fHwxNzY5MDY2MzU1fDA&ixlib=rb-4.1.0&q=80&w=1080' },
-    { name: 'Ice Cream', price: 80, image: 'https://images.unsplash.com/photo-1559703248-dcaaec9fab78?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpY2UlMjBjcmVhbSUyMGNvbmV8ZW58MXx8fHwxNzY5MDk1NDA2fDA&ixlib=rb-4.1.0&q=80&w=1080' },
-    { name: 'Cold Drink', price: 50, image: 'https://images.unsplash.com/photo-1619719304580-c6f308e5315a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb2xkJTIwZHJpbmslMjBzb2RhfGVufDF8fHx8MTc2OTE1OTE2OHww&ixlib=rb-4.1.0&q=80&w=1080' }
-  ];
+  useEffect(() => {
+    const fetchFoods = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/foods");
+        setFoods(res.data);
+      } catch (error) {
+        console.error("Error fetching foods:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleOrder = (itemName: string, itemPrice: number) => {
-    const existingItem = orderItems.find(item => item.name === itemName);
-    
-    if (existingItem) {
-      setOrderItems(orderItems.map(item =>
-        item.name === itemName
+    fetchFoods();
+  }, []);
+
+  const addToCart = (food: FoodItem) => {
+    const existing = cart.find(item => item._id === food._id);
+
+    if (existing) {
+      setCart(cart.map(item =>
+        item._id === food._id
           ? { ...item, quantity: item.quantity + 1 }
           : item
       ));
     } else {
-      setOrderItems([...orderItems, { name: itemName, price: itemPrice, quantity: 1 }]);
+      setCart([
+        ...cart,
+        {
+          _id: food._id,
+          food_name: food.food_name,
+          price: food.price,
+          quantity: 1
+        }
+      ]);
     }
   };
 
-  const totalAmount = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const increaseQty = (id: string) => {
+    setCart(cart.map(item =>
+      item._id === id
+        ? { ...item, quantity: item.quantity + 1 }
+        : item
+    ));
+  };
+
+  const decreaseQty = (id: string) => {
+    setCart(cart.map(item =>
+      item._id === id && item.quantity > 1
+        ? { ...item, quantity: item.quantity - 1 }
+        : item
+    ));
+  };
+
+  const removeItem = (id: string) => {
+    setCart(cart.filter(item => item._id !== id));
+  };
+
+  const totalAmount = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
 
   return (
     <div style={{
-      fontFamily: 'Arial, sans-serif',
-      backgroundColor: '#ffffff',
-      minHeight: '100vh'
+      padding: "50px",
+      fontFamily: "Poppins, sans-serif",
+      background: "#f8f9fa",
+      minHeight: "100vh"
     }}>
-      <div style={{
-        backgroundColor: '#e9ecef',
-        padding: '20px',
-        textAlign: 'center',
-        borderBottom: '3px solid #007bff'
+      <h1 style={{
+        marginBottom: "40px",
+        fontSize: "32px",
+        fontWeight: "600"
       }}>
-        <h1 style={{
-          margin: '0',
-          fontSize: '32px',
-          color: '#333',
-          fontWeight: 'bold'
-        }}>
-          Theme Park Management System
-        </h1>
-      </div>
-
+        🍔 Food Ordering
+      </h1>
 
       <div style={{
-        maxWidth: '1200px',
-        margin: '40px auto',
-        padding: '20px'
+        display: "grid",
+        gridTemplateColumns: "2fr 1fr",
+        gap: "40px"
       }}>
-        <h2 style={{ color: '#333', marginBottom: '20px' }}>
-          Food Ordering
-        </h2>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px' }}>
-          <div>
-            <h3 style={{ color: '#333', marginBottom: '15px' }}>Menu</h3>
+        {/* MENU */}
+        <div>
+          {loading ? (
+            <p>Loading foods...</p>
+          ) : (
             <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '15px'
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+              gap: "25px"
             }}>
-              {foodMenu.map((item) => (
-                <div key={item.name} style={{
-                  border: '2px solid #ddd',
-                  backgroundColor: '#fff'
-                }}>
-                  <img 
-                    src={item.image}
-                    alt={item.name}
+              {foods.map(food => (
+                <div
+                  key={food._id}
+                  style={{
+                    background: "#fff",
+                    borderRadius: "12px",
+                    overflow: "hidden",
+                    boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+                    transition: "all 0.3s ease",
+                    cursor: "pointer"
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.transform = "translateY(-8px)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.transform = "translateY(0)")
+                  }
+                >
+                  
+                  <img
+                    src={`/assets/${food.image}`}
+                    alt={food.food_name}
                     style={{
-                      width: '100%',
-                      height: '150px',
-                      objectFit: 'cover'
+                      width: "100%",
+                      height: "200px",
+                      objectFit: "cover"
                     }}
                   />
-                  <div style={{ padding: '15px' }}>
-                    <h4 style={{ margin: '0 0 8px 0', color: '#333' }}>{item.name}</h4>
-                    <p style={{ margin: '0 0 12px 0', fontSize: '18px', fontWeight: 'bold', color: '#28a745' }}>
-                      ₹{item.price}
+
+                  <div style={{ padding: "18px" }}>
+                    <h3 style={{ marginBottom: "10px" }}>
+                      {food.food_name}
+                    </h3>
+
+                    <p style={{
+                      fontWeight: "600",
+                      color: "#ff6b35",
+                      marginBottom: "15px"
+                    }}>
+                      ₹{food.price}
                     </p>
+
                     <button
-                      onClick={() => handleOrder(item.name, item.price)}
+                      onClick={() => addToCart(food)}
                       style={{
-                        backgroundColor: '#28a745',
-                        color: 'white',
-                        padding: '8px 20px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        fontSize: '14px',
-                        width: '100%',
-                        borderRadius: '0'
+                        width: "100%",
+                        padding: "10px",
+                        background: "linear-gradient(45deg, #ff6b35, #ff8e53)",
+                        border: "none",
+                        borderRadius: "8px",
+                        color: "#fff",
+                        fontWeight: "500",
+                        cursor: "pointer",
+                        transition: "0.3s"
                       }}
                     >
-                      Order
+                      Add to Cart
                     </button>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
+          )}
+        </div>
 
-          <div>
-            <h3 style={{ color: '#333', marginBottom: '15px' }}>Order Summary</h3>
-            <div style={{
-              backgroundColor: '#f8f9fa',
-              padding: '20px',
-              border: '2px solid #ddd',
-              minHeight: '300px'
-            }}>
-              {orderItems.length === 0 ? (
-                <p style={{ color: '#666', fontSize: '14px' }}>
-                  Your cart is empty. Add items to place an order.
-                </p>
-              ) : (
-                <>
-                  <table style={{ width: '100%', marginBottom: '15px' }}>
-                    <tbody>
-                      {orderItems.map(item => (
-                        <tr key={item.name}>
-                          <td style={{ padding: '5px 0', fontSize: '14px' }}>
-                            {item.name}
-                          </td>
-                          <td style={{ padding: '5px 0', fontSize: '14px', textAlign: 'right' }}>
-                            x{item.quantity}
-                          </td>
-                          <td style={{ padding: '5px 0', fontSize: '14px', textAlign: 'right' }}>
-                            ₹{item.price * item.quantity}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+        {/* CART */}
+        <div>
+          <div style={{
+            background: "#fff",
+            padding: "25px",
+            borderRadius: "12px",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.08)"
+          }}>
+            <h2 style={{ marginBottom: "20px" }}>
+              🛒 Order Summary
+            </h2>
 
-                  <div style={{
-                    borderTop: '2px solid #ddd',
-                    paddingTop: '10px',
-                    marginTop: '10px'
+            {cart.length === 0 ? (
+              <p style={{ color: "#888" }}>
+                Your cart is empty.
+              </p>
+            ) : (
+              <>
+                {cart.map(item => (
+                  <div key={item._id} style={{
+                    marginBottom: "18px",
+                    borderBottom: "1px solid #eee",
+                    paddingBottom: "10px"
                   }}>
                     <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      marginBottom: '15px'
+                      display: "flex",
+                      justifyContent: "space-between",
+                      marginBottom: "8px"
                     }}>
-                      <strong style={{ fontSize: '16px' }}>Total:</strong>
-                      <strong style={{ fontSize: '16px' }}>₹{totalAmount}</strong>
+                      <strong>{item.food_name}</strong>
+                      <button
+                        onClick={() => removeItem(item._id)}
+                        style={{
+                          background: "transparent",
+                          border: "none",
+                          color: "red",
+                          cursor: "pointer"
+                        }}
+                      >
+                        ✕
+                      </button>
                     </div>
-                    <button
-                      onClick={() => {
-                        alert('Order placed successfully! (Demo)');
-                        setOrderItems([]);
-                      }}
-                      style={{
-                        width: '100%',
-                        backgroundColor: '#007bff',
-                        color: 'white',
-                        padding: '10px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        fontSize: '15px',
-                        borderRadius: '0'
-                      }}
-                    >
-                      Place Order
-                    </button>
+
+                    <div style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center"
+                    }}>
+                      <div>
+                        <button onClick={() => decreaseQty(item._id)}>-</button>
+                        <span style={{ margin: "0 10px" }}>
+                          {item.quantity}
+                        </span>
+                        <button onClick={() => increaseQty(item._id)}>+</button>
+                      </div>
+
+                      <span>
+                        ₹{item.price * item.quantity}
+                      </span>
+                    </div>
                   </div>
-                </>
-              )}
-            </div>
+                ))}
+
+                <div style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: "20px",
+                  fontWeight: "600",
+                  fontSize: "18px"
+                }}>
+                  <span>Total</span>
+                  <span>₹{totalAmount}</span>
+                </div>
+
+                <button
+                  onClick={() => {
+                    alert("Order placed successfully!");
+                    setCart([]);
+                  }}
+                  style={{
+                    width: "100%",
+                    marginTop: "20px",
+                    padding: "12px",
+                    background: "linear-gradient(45deg, #007bff, #00c6ff)",
+                    border: "none",
+                    borderRadius: "8px",
+                    color: "#fff",
+                    fontWeight: "500",
+                    cursor: "pointer"
+                  }}
+                >
+                  Place Order
+                </button>
+              </>
+            )}
           </div>
         </div>
-      </div>
 
+      </div>
     </div>
   );
 }
