@@ -26,7 +26,7 @@ app.get("/api/health", (req, res) => {
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/rides", require("./routes/rideRoute"));
 app.use("/api/booking", require("./routes/bookingRoute"));
-app.use("/api/food", require("./routes/foodRoutes"));
+app.use("/api/foods", require("./routes/foodRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 
 // Global Error Handler
