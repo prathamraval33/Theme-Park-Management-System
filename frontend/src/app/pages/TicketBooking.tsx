@@ -139,7 +139,7 @@ export function TicketBooking() {
                 Total Price: ₹{totalPrice}
               </div>
 
-              <button type="submit" disabled={loading} className="book-btn">
+              <button type="submit" disabled={loading} className="ticket-book-btn">
                 {loading ? "Booking..." : "Book Ticket"}
               </button>
 

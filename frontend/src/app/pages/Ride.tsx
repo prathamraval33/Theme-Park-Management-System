@@ -54,7 +54,7 @@ export function Rides() {
 
             <div className="ride-image-wrapper">
               <img
-                src={ride.image}
+                src={`/assets/${ride.image}`}
                 alt={ride.ride_name}
                 className="ride-image"
               />
@@ -63,10 +63,9 @@ export function Rides() {
                 className="book-btn"
                 onClick={() => navigate(`/tickets/${ride._id}`)}
               >
-                Book Ride
+                🎟 Book Ride
               </button>
             </div>
-
             <div className="ride-info">
               <h3>{ride.ride_name}</h3>
               <p>{ride.description}</p>
