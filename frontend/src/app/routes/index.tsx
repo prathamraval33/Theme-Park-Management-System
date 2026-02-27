@@ -12,6 +12,7 @@ import { FoodOrdering } from "../pages/FoodOrdering";
 import { AdminDashboard } from "../pages/AdminDashboard";
 import { Contact } from "../pages/Contact";
 import { Rides } from "../pages/Ride";
+import { Profile } from "../pages/Profile";
 import { RideStaffDashboard } from "../pages/ridestaff/RideStaffDashboard";
 
 function MainLayout() {
@@ -58,6 +59,10 @@ export const router = createBrowserRouter([
       {
         path: "contact",
         element: <Contact />,
+      },
+      {
+        path:"Profile",
+        element:<Profile/>,
       },
 
       {

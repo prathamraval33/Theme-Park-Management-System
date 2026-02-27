@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import "../../styles/Home.css";
 import { Banner } from "../components/Banner";
 
 interface Ride {
   _id: string;
-  ride_name: string;
+  ride_name?: string;
+  name?: string;
   avgDuration: number;
   currentQueue: number;
   status: string;
@@ -15,7 +17,8 @@ interface Ride {
 
 interface Food {
   _id: string;
-  food_name: string;
+  food_name?: string;
+  name?: string;
   price: number;
   image: string;
 }
@@ -30,96 +33,102 @@ export function Home() {
   }, []);
 
   const fetchData = async () => {
-    const rideRes = await axios.get("http://localhost:5000/api/rides");
-    const foodRes = await axios.get("http://localhost:5000/api/food");
+    try {
+      const rideRes = await axios.get("http://localhost:5000/api/rides");
+      const foodRes = await axios.get("http://localhost:5000/api/food");
 
-    setRides(rideRes.data.slice(0, 4));
-    setFood(foodRes.data.slice(0, 4));
-  };
-
-  /* 3D EFFECT */
-  const handleMouseMove = (e: any) => {
-    const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
-
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const rotateX = -(y - rect.height / 2) / 12;
-    const rotateY = (x - rect.width / 2) / 12;
-
-    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-  };
-
-  const handleMouseLeave = (e: any) => {
-    e.currentTarget.style.transform = "rotateX(0) rotateY(0)";
+      setRides(rideRes.data.slice(0, 4));
+      setFood(foodRes.data.slice(0, 4));
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
     <div className="home">
 
-      {/* ✅ Banner Back */}
+      {/* Banner */}
       <Banner />
 
       {/* RIDES */}
-      <section>
+      <section className="section">
         <div className="section-header">
           <h2>Popular Rides</h2>
           <button onClick={() => navigate("/rides")}>More →</button>
         </div>
 
         <div className="grid">
-          {rides.map((ride) => (
-            <div
-              key={ride._id}
-              className="card"
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
-            >
-              <img src={`/assets/${ride.image}`} />
+          {rides.map((ride) => {
+            const waitTime = ride.currentQueue * ride.avgDuration;
 
-              <div className="card-content">
-                <h3>{ride.ride_name}</h3>
+            return (
+              <motion.div
+                key={ride._id}
+                className="card"
+                whileHover={{ scale: 1.05, rotateX: 5, rotateY: 5 }}
+                transition={{ type: "spring", stiffness: 200 }}
+              >
+                {/*  IMAGE */}
+                <img src={ride.image} alt={ride.ride_name} />
 
-                <span className={`status ${ride.status.toLowerCase()}`}>
-                  {ride.status}
-                </span>
+                <div className="card-content">
+                  <h3 className="card-title" >
+                    {ride.ride_name || ride.name || "Ride"}
+                  </h3>
 
-                <p>Queue: {ride.currentQueue}</p>
-                <p>Wait: {ride.currentQueue * ride.avgDuration} mins</p>
+                  <span className={`status ${ride.status?.toLowerCase()}`}>
+                    {ride.status}
+                  </span>
 
-                <button onClick={() => navigate("/tickets")}>
-                  Book Ride
-                </button>
-              </div>
-            </div>
-          ))}
+                  <p>Queue: {ride.currentQueue}</p>
+                  <p>Wait: {waitTime} mins</p>
+
+                  <button
+                    className="primary-btn"
+                    onClick={() => navigate(`/tickets/${ride._id}`)}
+                  >
+                    Book Ride →
+                  </button>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </section>
 
       {/* FOOD */}
-      <section>
-        <h2>Food & Drinks</h2>
+      <section className="section">
+        <div className="section-header">
+          <h2>Food & Drinks</h2>
+          <button onClick={() => navigate("/food")}>More →</button>
+        </div>
 
         <div className="grid">
           {food.map((item) => (
-            <div
+            <motion.div
               key={item._id}
               className="card"
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
+              whileHover={{ scale: 1.05, rotateX: 5, rotateY: 5 }}
+              transition={{ type: "spring", stiffness: 200 }}
             >
-              <img src={`/assets/${item.image}`} />
+              {/*  IMAGE  */}
+              <img src={item.image} alt={item.food_name} />
 
               <div className="card-content">
-                <h3>{item.food_name}</h3>
-                <p>₹{item.price}</p>
+                <h3 className="card-title">
+                  {item.food_name || item.name || "Food"}
+                </h3>
 
-                <button onClick={() => navigate("/food")}>
-                  Order Now
+                <p className="price">₹{item.price}</p>
+
+                <button
+                  className="primary-btn"
+                  onClick={() => navigate("/food")}
+                >
+                  Order Now →
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>

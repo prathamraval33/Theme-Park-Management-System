@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import "../../styles/profile.css";
 
 interface Booking {
@@ -12,12 +14,13 @@ interface Booking {
 
 export function Profile() {
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const navigate = useNavigate();
 
   const userData = localStorage.getItem("user");
   const user = userData ? JSON.parse(userData) : null;
 
   useEffect(() => {
-    if (user && user.user_id) {
+    if (user?.user_id) {
       fetchBookings();
     }
   }, []);
@@ -27,11 +30,15 @@ export function Profile() {
       const res = await axios.get(
         `http://localhost:5000/api/booking/user/${user.user_id}`
       );
-      console.log("Bookings:", res.data); // debug
       setBookings(res.data);
     } catch (error) {
       console.error("Error loading bookings", error);
     }
+  };
+
+  const logout = () => {
+    localStorage.removeItem("user");
+    navigate("/login");
   };
 
   if (!user) {
@@ -40,37 +47,59 @@ export function Profile() {
 
   return (
     <div className="profile-page">
-      <h2 className="profile-title">My Profile</h2>
 
-      <div className="profile-card">
-        <h3>Welcome, {user.name}</h3>
-        <p>Email: {user.email}</p>
-        <p>Role: {user.role}</p>
+      {/* HEADER ACTIONS */}
+      <div className="profile-actions">
+        <button onClick={() => navigate("/")}>← Back Home</button>
+        <button className="logout-btn" onClick={logout}>
+          Logout
+        </button>
       </div>
 
-      <h2 className="ticket-title">My Tickets</h2>
+      {/* PROFILE CARD */}
+      <motion.div
+        className="profile-card"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <h2>👤 {user.name}</h2>
+        <p>{user.email}</p>
+        <span className="role-badge">{user.role}</span>
+      </motion.div>
+
+      {/* TICKETS */}
+      <h2 className="ticket-title">🎟 My Bookings</h2>
 
       {bookings.length === 0 ? (
         <p className="profile-message">No bookings found.</p>
       ) : (
-        bookings.map((booking, index) => (
-          <div key={index} className="ticket-card">
-            <div className="ticket-info">
-              <p><strong>Date:</strong> {booking.booking_date}</p>
-              <p><strong>Tickets:</strong> {booking.ticket_quantity}</p>
-              <p><strong>Total:</strong> ₹{booking.total_amount}</p>
-              <p><strong>Status:</strong> {booking.payment_status}</p>
-            </div>
+        <div className="ticket-grid">
+          {bookings.map((booking, index) => (
+            <motion.div
+              key={index}
+              className="ticket-card"
+              whileHover={{ scale: 1.03 }}
+            >
+              <div className="ticket-info">
+                <p><strong>Date:</strong> {booking.booking_date}</p>
+                <p><strong>Tickets:</strong> {booking.ticket_quantity}</p>
+                <p><strong>Total:</strong> ₹{booking.total_amount}</p>
 
-            {booking.qr_code && (
-              <img
-                src={booking.qr_code}
-                alt="QR Code"
-                className="qr-image"
-              />
-            )}
-          </div>
-        ))
+                <span className={`status ${booking.payment_status}`}>
+                  {booking.payment_status}
+                </span>
+              </div>
+
+              {booking.qr_code && (
+                <img
+                  src={booking.qr_code}
+                  alt="QR Code"
+                  className="qr-image"
+                />
+              )}
+            </motion.div>
+          ))}
+        </div>
       )}
     </div>
   );
