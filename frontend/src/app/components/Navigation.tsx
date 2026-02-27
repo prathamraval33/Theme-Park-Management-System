@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { useState } from "react";
 import "../../styles/Navigation.css";
@@ -37,30 +37,38 @@ export function Navigation() {
     <nav className="navbar">
       <div className="nav-container">
 
-        {/* LOGO */}
-        <Link to="/" className="nav-logo">
-          🎢 ThemePark
-        </Link>
+        {/* 🔥 LOGO IMAGE */}
+        <div className="nav-logo" onClick={() => navigate("/")}>
+          <img
+            src="/assets/logo.png"   // ⚠️ make sure file name is correct
+            alt="FunFusion Logo"
+            className="nav-logo-img"
+          />
+          <span className="logo-text">FunFusion</span>
+        </div>
 
         {/* LINKS */}
         <div className="nav-links">
-          <Link to="/">Home</Link>
-          <Link to="/rides">Rides</Link>
-          <Link to="/tickets">Tickets</Link>
-          <Link to="/queue">Queue</Link>
-          <Link to="/food">Food</Link>
-          <Link to="/contact">Contact</Link>
+          <span onClick={() => navigate("/")}>Home</span>
+          <span onClick={() => navigate("/rides")}>Rides</span>
+          <span onClick={() => navigate("/tickets")}>Tickets</span>
+          <span onClick={() => navigate("/queue")}>Queue</span>
+          <span onClick={() => navigate("/food")}>Food</span>
+          <span onClick={() => navigate("/contact")}>Contact</span>
 
           {user && user.role !== "Customer" && (
-            <Link to={getDashboardRoute()} className="dashboard-link">
+            <span
+              className="dashboard-link"
+              onClick={() => navigate(getDashboardRoute())}
+            >
               Dashboard
-            </Link>
+            </span>
           )}
 
           {user ? (
             <div className="profile-wrapper">
               <FaUserCircle
-                size={30}
+                size={32}
                 className="profile-icon"
                 onClick={() => setOpen(!open)}
               />
@@ -69,7 +77,7 @@ export function Navigation() {
                 <div className="profile-dropdown">
                   <p className="profile-name">👤 {user.name}</p>
 
-                  <button onClick={() => navigate("/profile")}>
+                  <button onClick={() => navigate("/Profile")}>
                     Profile
                   </button>
 
@@ -84,9 +92,12 @@ export function Navigation() {
               )}
             </div>
           ) : (
-            <Link to="/login" className="login-btn">
+            <button
+              className="login-btn"
+              onClick={() => navigate("/login")}
+            >
               Login
-            </Link>
+            </button>
           )}
         </div>
       </div>
