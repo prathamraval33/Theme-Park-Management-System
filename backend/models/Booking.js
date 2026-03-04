@@ -8,21 +8,35 @@ const bookingSchema = new mongoose.Schema(
       required: true
     },
 
-    ride_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Ride",
-      required: true
-    },
-
     booking_date: {
       type: Date,
       required: true
     },
 
-    ticket_quantity: {
+    /* 🔥 NEW: MULTI-PLAN ITEMS */
+    items: [
+      {
+        title: {
+          type: String,
+          required: true
+        },
+        qty: {
+          type: Number,
+          required: true,
+          min: 1
+        },
+        price: {
+          type: Number,
+          required: true,
+          min: 0
+        }
+      }
+    ],
+
+    /* 🔥 OPTIONAL (TOTAL TICKETS) */
+    total_tickets: {
       type: Number,
-      required: true,
-      min: 1
+      default: 0
     },
 
     total_amount: {

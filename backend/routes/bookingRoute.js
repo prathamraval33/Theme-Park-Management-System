@@ -2,85 +2,95 @@ const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 const Booking = require("../models/Booking");
-const Ride = require("../models/Rides");
 const QRCode = require("qrcode");
 
 /* ========================= */
-/* Create Booking */
+/* CREATE BOOKING (MULTI-PLAN) */
 /* ========================= */
 router.post("/create", async (req, res) => {
   try {
-    let {
+    const {
       user_id,
-      ride_id,
       booking_date,
-      ticket_quantity,
+      items,
       total_amount,
       payment_status
     } = req.body;
 
-    // Validate raw fields first
+    console.log("Incoming booking:", req.body); // 🔍 DEBUG
+
+    /* ===== VALIDATION ===== */
     if (
       !user_id ||
-      !ride_id ||
       !booking_date ||
-      !ticket_quantity ||
+      !items ||
+      items.length === 0 ||
       !total_amount ||
       !payment_status
     ) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-
-    // Convert properly
-    ticket_quantity = Number(ticket_quantity);
-    total_amount = Number(total_amount);
-    const parsedDate = new Date(booking_date);
-
-    if (isNaN(parsedDate.getTime())) {
-      return res.status(400).json({ message: "Invalid booking date" });
+      return res.status(400).json({
+        message: "All fields are required"
+      });
     }
 
     if (!mongoose.Types.ObjectId.isValid(user_id)) {
-      return res.status(400).json({ message: "Invalid User ID" });
+      return res.status(400).json({
+        message: "Invalid User ID"
+      });
     }
 
-    if (!mongoose.Types.ObjectId.isValid(ride_id)) {
-      return res.status(400).json({ message: "Invalid Ride ID" });
+    const parsedDate = new Date(booking_date);
+
+    if (isNaN(parsedDate.getTime())) {
+      return res.status(400).json({
+        message: "Invalid booking date"
+      });
     }
 
-    const ride = await Ride.findById(ride_id);
+    /* ===== VALIDATE ITEMS ===== */
+    let totalTickets = 0;
 
-    if (!ride) {
-      return res.status(404).json({ message: "Ride not found" });
+    for (let item of items) {
+      if (!item.title || !item.qty || !item.price) {
+        return res.status(400).json({
+          message: "Invalid item format"
+        });
+      }
+
+      const qty = Number(item.qty);
+      const price = Number(item.price);
+
+      if (qty <= 0 || price <= 0) {
+        return res.status(400).json({
+          message: "Invalid quantity or price"
+        });
+      }
+
+      totalTickets += qty;
     }
 
-    if (ride.status !== "Open") {
-      return res.status(400).json({ message: "Ride is not open" });
-    }
-
-    if (ride.currentQueue + ticket_quantity > ride.capacity) {
-      return res.status(400).json({ message: "Ride is full" });
-    }
-
-    ride.currentQueue += ticket_quantity;
-    await ride.save();
-
+    /* ===== GENERATE QR ===== */
     const qrText = `
+🎢 Theme Park Ticket
+
 User ID: ${user_id}
-Ride: ${ride.ride_name}
 Date: ${parsedDate.toDateString()}
-Tickets: ${ticket_quantity}
-Amount: ${total_amount}
+
+Tickets:
+${items.map(i => `- ${i.title} x${i.qty}`).join("\n")}
+
+Total Tickets: ${totalTickets}
+Total Amount: ₹${total_amount}
 Status: ${payment_status}
 `;
 
     const qrImage = await QRCode.toDataURL(qrText);
 
+    /* ===== SAVE BOOKING ===== */
     const booking = new Booking({
       user_id,
-      ride_id,
       booking_date: parsedDate,
-      ticket_quantity,
+      items,
       total_amount,
       payment_status,
       qr_code: qrImage
@@ -89,34 +99,42 @@ Status: ${payment_status}
     await booking.save();
 
     return res.status(201).json({
-      message: "Booking saved successfully",
-      qr_code: qrImage
+      message: "Booking successful",
+      qr_code: qrImage,
+      booking
     });
 
   } catch (error) {
     console.error("Booking Error:", error);
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({
+      message: "Server error",
+      error: error.message
+    });
   }
 });
 
 /* ========================= */
-/* Get Bookings by User */
+/* GET BOOKINGS BY USER */
 /* ========================= */
 router.get("/user/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid User ID" });
+      return res.status(400).json({
+        message: "Invalid User ID"
+      });
     }
 
-    const bookings = await Booking.find({ user_id: id }).populate("ride_id");
+    const bookings = await Booking.find({ user_id: id });
 
     return res.status(200).json(bookings);
 
   } catch (error) {
     console.error("Fetch Booking Error:", error);
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({
+      message: error.message
+    });
   }
 });
 
