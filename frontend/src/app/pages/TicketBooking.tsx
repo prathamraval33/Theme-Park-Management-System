@@ -1,6 +1,5 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../../styles/ticket.css";
 
@@ -10,18 +9,24 @@ interface Plan {
   features: string[];
 }
 
+interface CartItem {
+  title: string;
+  price: number;
+  qty: number;
+}
+
 export function TicketBooking() {
-  const navigate = useNavigate();
 
   const [visitDate, setVisitDate] = useState("");
-  const [cart, setCart] = useState<any[]>([]);
-  const [qrCode, setQrCode] = useState("");
+  const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
-
-  const userData = localStorage.getItem("user");
-  const user = userData ? JSON.parse(userData) : null;
+  const [qrCode, setQrCode] = useState("");
 
   const today = new Date().toISOString().split("T")[0];
+
+  /* ============================ */
+  /* TICKET PLANS */
+  /* ============================ */
 
   const plans: Plan[] = [
     {
@@ -46,81 +51,157 @@ export function TicketBooking() {
     }
   ];
 
+  /* ============================ */
+  /* UPDATE CART */
+  /* ============================ */
+
   const updateCart = (plan: Plan, qty: number) => {
+
     if (qty <= 0) {
       setCart(cart.filter((item) => item.title !== plan.title));
       return;
     }
 
+    const newItem: CartItem = {
+      title: plan.title,
+      price: plan.price,
+      qty
+    };
+
     const exists = cart.find((item) => item.title === plan.title);
 
     if (exists) {
+
       setCart(
         cart.map((item) =>
-          item.title === plan.title ? { ...item, qty } : item
+          item.title === plan.title ? newItem : item
         )
       );
+
     } else {
-      setCart([...cart, { ...plan, qty }]);
+
+      setCart([...cart, newItem]);
+
     }
+
   };
+
+  /* ============================ */
+  /* TOTAL PRICE */
+  /* ============================ */
 
   const total = cart.reduce(
     (sum, item) => sum + item.price * item.qty,
     0
   );
 
+  /* ============================ */
+  /* BOOK TICKET */
+  /* ============================ */
+
   const handleBooking = async () => {
-    if (!user) return alert("Please login first");
-    if (!visitDate) return alert("Select visit date");
-    if (cart.length === 0) return alert("Select at least one plan");
+
+    const userData = localStorage.getItem("user");
+
+    if (!userData) {
+      alert("Please login first");
+      return;
+    }
+
+    const user = JSON.parse(userData);
+
+    if (!user.email) {
+      alert("Session expired. Please login again.");
+      return;
+    }
+
+    if (!visitDate) {
+      alert("Please select visit date");
+      return;
+    }
+
+    if (cart.length === 0) {
+      alert("Please select tickets");
+      return;
+    }
+
+    const cleanItems = cart.map((item) => ({
+      title: item.title,
+      qty: item.qty,
+      price: item.price
+    }));
+
+    console.log("Booking Request:", {
+      email: user.email,
+      booking_date: visitDate,
+      items: cleanItems,
+      total_amount: total
+    });
 
     setLoading(true);
 
     try {
+
       const res = await axios.post(
         "http://localhost:5000/api/booking/create",
         {
-          user_id: user._id,
-          user_email: user.email,
+          email: user.email,
           booking_date: visitDate,
-          items: cart,
+          items: cleanItems,
           total_amount: total,
           payment_status: "Paid"
         }
       );
 
       setQrCode(res.data.qr_code);
-      setCart([]);
-      setVisitDate("");
 
-    } catch (err) {
-      alert("Booking failed");
+      alert("Booking Successful 🎉");
+
+    } catch (error: any) {
+
+      console.log("Booking Error:", error);
+      console.log("Server Response:", error.response?.data);
+
+      alert(error.response?.data?.message || "Booking failed");
+
     } finally {
+
       setLoading(false);
+
     }
+
   };
 
+  /* ============================ */
+  /* UI */
+  /* ============================ */
+
   return (
+
     <div className="ticket-page">
 
-      {/* HEADER */}
-      <div className="ticket-header">
-        <button onClick={() => navigate("/")} className="back-btn">
-          ← Back Home
-        </button>
-        <h2>🎟 Family Ticket Booking</h2>
-      </div>
+      <h2 className="ticket-title">🎟 Theme Park Ticket Booking</h2>
 
-      {/* PLANS */}
+      {/* ============================ */}
+      {/* PLAN GRID */}
+      {/* ============================ */}
+
       <div className="plan-grid">
+
         {plans.map((plan, index) => (
+
           <motion.div
             key={index}
-            className="plan-card"
+            className={`plan-card ${
+              cart.some((c) => c.title === plan.title)
+                ? "selected"
+                : ""
+            }`}
             whileHover={{ scale: 1.05 }}
           >
+
             <h3>{plan.title}</h3>
+
             <h2>₹{plan.price}</h2>
 
             <ul>
@@ -132,75 +213,108 @@ export function TicketBooking() {
             <input
               type="number"
               min="0"
-              placeholder="Add qty"
+              placeholder="Add quantity"
               onChange={(e) =>
                 updateCart(plan, parseInt(e.target.value) || 0)
               }
             />
+
           </motion.div>
+
         ))}
+
       </div>
 
-      {/* BOOKING SECTION */}
-      <div className="booking-box">
 
-        {/* SUMMARY */}
-        <div className="summary-box">
-          <h3>🧾 Booking Summary</h3>
+      {/* ============================ */}
+      {/* BOOKING SUMMARY */}
+      {/* ============================ */}
 
-          {cart.length === 0 ? (
-            <p className="empty-msg">No tickets selected</p>
-          ) : (
-            <>
-              {cart.map((item, i) => (
-                <div key={i} className="summary-item">
-                  <span>{item.title}</span>
-                  <span>{item.qty} × ₹{item.price}</span>
-                  <span>₹{item.qty * item.price}</span>
-                </div>
-              ))}
+      <div className="booking-summary">
 
-              <div className="summary-divider"></div>
+        <h3>🧾 Booking Summary</h3>
 
-              <div className="summary-total">
-                <span>Total</span>
-                <span>₹{total}</span>
-              </div>
-            </>
-          )}
+        {cart.length === 0 ? (
+          <p className="empty-msg">No tickets selected</p>
+        ) : (
+          cart.map((item, i) => (
+            <div key={i} className="summary-item">
+              <span>{item.title}</span>
+              <span>{item.qty} × ₹{item.price}</span>
+              <span>₹{item.qty * item.price}</span>
+            </div>
+          ))
+        )}
 
-          <label className="date-label">Visit Date</label>
-          <input
-            type="date"
-            min={today}
-            value={visitDate}
-            onChange={(e) => setVisitDate(e.target.value)}
+        <div className="summary-divider"></div>
+
+        <div className="summary-total">
+          <span>Total</span>
+          <span>₹{total}</span>
+        </div>
+
+        <label>Select Visit Date</label>
+
+        <input
+          type="date"
+          min={today}
+          value={visitDate}
+          onChange={(e) => setVisitDate(e.target.value)}
+        />
+
+      </div>
+
+
+      {/* ============================ */}
+      {/* QR CODE TICKET */}
+      {/* ============================ */}
+
+      {qrCode && (
+
+        <div className="qr-section">
+
+          <h3>Your Ticket</h3>
+
+          <img
+            src={qrCode}
+            alt="QR Ticket"
+            className="qr-img"
           />
 
-          {/* 🔥 MAIN BUTTON */}
-          <button
-            onClick={handleBooking}
-            className="book-btn main-book-btn"
-            disabled={cart.length === 0 || !visitDate || loading}
-          >
-            {loading ? "Processing..." : "Proceed to Book 🎟"}
-          </button>
         </div>
 
-        {/* QR */}
-        <div className="qr-section">
-          <h3>🎫 Your Ticket</h3>
+      )}
 
-          {qrCode ? (
-            <img src={qrCode} className="qr-img" />
-          ) : (
-            <div className="qr-placeholder">
-              QR will appear after booking
-            </div>
-          )}
+
+      {/* ============================ */}
+      {/* STICKY BOOKING BAR */}
+      {/* ============================ */}
+
+      <div className="sticky-booking-bar">
+
+        <div className="sticky-info">
+
+          <span className="sticky-total">
+            Total: ₹{total}
+          </span>
+
+          <span className="sticky-items">
+            {cart.length} ticket types selected
+          </span>
+
         </div>
+
+        <button
+          onClick={handleBooking}
+          className="sticky-book-btn"
+          disabled={loading || cart.length === 0 || !visitDate}
+        >
+          {loading ? "Processing..." : "Book Tickets 🎟"}
+        </button>
 
       </div>
+
     </div>
+
   );
 }
