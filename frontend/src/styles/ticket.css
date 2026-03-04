@@ -1,165 +1,318 @@
-.ticket-page {
-  padding: 30px;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #050816, #0a0f2c);
-  color: white;
+.ticket-page{
+  padding:30px;
+  min-height:100vh;
+  background:linear-gradient(135deg,#050816,#0a0f2c);
+  color:white;
 }
 
-/* HEADER */
-.ticket-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
-}
+/* TITLE */
 
-/* BACK BUTTON */
-.back-btn {
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: none;
-  background: linear-gradient(90deg, #ff7a18, #ff3c8e);
-  color: white;
-  cursor: pointer;
+.ticket-title{
+  text-align:center;
+  margin-bottom:30px;
 }
 
 /* PLAN GRID */
-.plan-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 20px;
+
+.plan-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:20px;
 }
 
 /* PLAN CARD */
-.plan-card {
-  padding: 20px;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.08);
-  text-align: center;
+
+.plan-card{
+  padding:20px;
+  border-radius:16px;
+
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(12px);
+
+  border:1px solid rgba(255,255,255,0.08);
+
+  text-align:center;
+  transition:0.3s;
 }
 
-.plan-card h2 {
-  color: #ff9f43;
+.plan-card.selected{
+  border:2px solid #ff7a18;
+  box-shadow:0 0 15px rgba(255,120,50,0.6);
+  transform:scale(1.02);
 }
 
-.plan-card ul {
-  list-style: none;
-  padding: 0;
+.plan-card h2{
+  color:#ff9f43;
 }
 
-.plan-card input {
-  width: 80%;
-  padding: 8px;
-  border-radius: 8px;
-  border: none;
+.plan-card ul{
+  list-style:none;
+  padding:0;
 }
 
-/* BOOKING BOX */
-.booking-box {
-  margin-top: 30px;
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+.plan-card input{
+  width:80%;
+  padding:8px;
+  border-radius:8px;
+  border:none;
 }
 
 /* SUMMARY */
-.summary-box {
-  flex: 1;
-  padding: 20px;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.08);
+
+.booking-summary{
+  margin-top:30px;
+  padding:20px;
+
+  border-radius:16px;
+
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(10px);
+
+  border:1px solid rgba(255,255,255,0.08);
 }
 
-.empty-msg {
-  color: #aaa;
+.summary-item{
+  display:grid;
+  grid-template-columns:1fr 1fr auto;
+  margin:6px 0;
 }
 
-.summary-item {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  margin: 8px 0;
-  color: #bfc4ff;
+.summary-divider{
+  height:1px;
+  background:rgba(255,255,255,0.1);
+  margin:10px 0;
 }
 
-.summary-divider {
-  height: 1px;
-  background: rgba(255,255,255,0.1);
-  margin: 10px 0;
+.summary-total{
+  display:flex;
+  justify-content:space-between;
+  font-weight:bold;
+  color:#ff9f43;
 }
 
-.summary-total {
-  display: flex;
-  justify-content: space-between;
-  font-weight: bold;
-  color: #ff9f43;
-}
-
-.date-label {
-  margin-top: 10px;
-  display: block;
-}
-
-.summary-box input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 8px;
-  border-radius: 8px;
-  border: none;
-}
-
-/* BUTTON */
-.book-btn {
-  width: 100%;
-  margin-top: 15px;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  background: linear-gradient(90deg, #ff7a18, #ff3c8e);
-  color: white;
-  cursor: pointer;
-}
-
-.book-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.booking-summary input{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border-radius:8px;
+  border:none;
 }
 
 /* QR */
-.qr-section {
-  flex: 1;
-  padding: 20px;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.08);
-  text-align: center;
+
+.qr-section{
+  margin-top:20px;
+  text-align:center;
 }
 
-.qr-img {
-  width: 160px;
-  margin-top: 10px;
+.qr-img{
+  width:160px;
 }
 
-.qr-placeholder {
-  height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #aaa;
+/* STICKY BOOKING BAR */
+
+.sticky-booking-bar{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+
+  background:rgba(10,15,44,0.95);
+  backdrop-filter:blur(10px);
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:15px 25px;
+
+  border-top:1px solid rgba(255,255,255,0.1);
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .booking-box {
-    flex-direction: column;
+/* INFO */
+
+.sticky-info{
+  display:flex;
+  flex-direction:column;
+}
+
+.sticky-total{
+  font-size:18px;
+  font-weight:bold;
+  color:#ff9f43;
+}
+
+.sticky-items{
+  font-size:13px;
+  color:#bfc4ff;
+}
+
+/* BUTTON */
+
+.sticky-book-btn{
+  padding:12px 20px;
+
+  border:none;
+  border-radius:10px;
+
+  background:linear-gradient(90deg,#ff7a18,#ff3c8e);
+  color:white;
+
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.sticky-book-btn:hover:not(:disabled){
+  transform:scale(1.05);
+}
+
+.sticky-book-btn:disabled{
+  opacity:0.5;
+  cursor:not-allowed;
+}
+
+/* prevent overlap */
+
+.ticket-page{
+  padding-bottom:90px;
+}
+/* ============================ */
+/* RESPONSIVE DESIGN */
+/* ============================ */
+
+/* Tablets */
+
+@media (max-width:1024px){
+
+  .ticket-page{
+    padding:20px;
   }
 
-  .ticket-header {
-    flex-direction: column;
-    gap: 10px;
+  .plan-grid{
+    grid-template-columns:repeat(2,1fr);
   }
+
+  .plan-card{
+    padding:18px;
+  }
+
+  .booking-summary{
+    padding:18px;
+  }
+
+}
+
+
+/* Large Phones */
+
+@media (max-width:768px){
+
+  .ticket-title{
+    font-size:22px;
+  }
+
+  .plan-grid{
+    grid-template-columns:1fr;
+    gap:18px;
+  }
+
+  .plan-card{
+    padding:16px;
+  }
+
+  .plan-card input{
+    width:100%;
+  }
+
+  .summary-item{
+    grid-template-columns:1fr auto;
+    row-gap:4px;
+  }
+
+  .summary-item span:last-child{
+    text-align:right;
+  }
+
+  .sticky-booking-bar{
+    flex-direction:column;
+    gap:10px;
+    padding:14px 16px;
+  }
+
+  .sticky-book-btn{
+    width:100%;
+  }
+
+}
+
+
+/* Small Phones */
+
+@media (max-width:480px){
+
+  .ticket-page{
+    padding:16px;
+  }
+
+  .ticket-title{
+    font-size:20px;
+  }
+
+  .plan-card{
+    padding:14px;
+  }
+
+  .plan-card h3{
+    font-size:16px;
+  }
+
+  .plan-card h2{
+    font-size:20px;
+  }
+
+  .plan-card li{
+    font-size:13px;
+  }
+
+  .plan-card input{
+    padding:7px;
+    font-size:14px;
+  }
+
+  .booking-summary{
+    padding:16px;
+  }
+
+  .summary-total{
+    font-size:15px;
+  }
+
+  .sticky-total{
+    font-size:16px;
+  }
+
+  .sticky-items{
+    font-size:12px;
+  }
+
+  .sticky-book-btn{
+    padding:10px;
+    font-size:14px;
+  }
+
+}
+
+
+/* Ultra Small Devices */
+
+@media (max-width:350px){
+
+  .plan-card h2{
+    font-size:18px;
+  }
+
+  .sticky-total{
+    font-size:15px;
+  }
+
 }

@@ -4,6 +4,7 @@ import axios from "axios";
 import "../../styles/login.css";
 
 export function Login() {
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -11,57 +12,102 @@ export function Login() {
 
   const navigate = useNavigate();
 
-  // 🔹 If already logged in → redirect automatically
+  /* ========================= */
+  /* AUTO REDIRECT IF LOGGED IN */
+  /* ========================= */
+
   useEffect(() => {
+
     const userData = localStorage.getItem("user");
+
     if (userData) {
+
       const user = JSON.parse(userData);
 
       if (user.role === "Admin") navigate("/admin");
       else if (user.role === "RideStaff") navigate("/ride-staff");
       else navigate("/");
+
     }
+
   }, [navigate]);
 
+
+  /* ========================= */
+  /* LOGIN HANDLER */
+  /* ========================= */
+
   const handleLogin = async (e: React.FormEvent) => {
+
     e.preventDefault();
 
     setError("");
 
     if (!email.trim() || !password.trim()) {
+
       setError("Please fill all fields");
       return;
+
     }
 
     try {
+
       setLoading(true);
 
       const res = await axios.post(
         "http://localhost:5000/api/auth/login",
         {
           email: email.trim(),
-          password,
+          password
         }
       );
 
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      /* ========================= */
+      /* STORE USER SESSION */
+      /* ========================= */
 
-      const userRole = res.data.user.role;
+      const userData = {
+        _id: res.data.user._id,
+        name: res.data.user.name,
+        email: res.data.user.email,
+        role: res.data.user.role
+      };
 
-      // 🔹 Role-based redirect
-      if (userRole === "Admin") navigate("/admin");
-      else if (userRole === "RideStaff") navigate("/ride-staff");
+      console.log("Login success:", userData);
+
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      /* ========================= */
+      /* REDIRECT BASED ON ROLE */
+      /* ========================= */
+
+      if (userData.role === "Admin") navigate("/admin");
+      else if (userData.role === "RideStaff") navigate("/ride-staff");
       else navigate("/");
 
     } catch (err: any) {
+
+      console.log("Login error:", err);
+
       setError(err.response?.data?.message || "Login Failed");
+
     } finally {
+
       setLoading(false);
+
     }
+
   };
 
+
+  /* ========================= */
+  /* UI */
+  /* ========================= */
+
   return (
+
     <div className="login-page">
+
       <div className="login-card">
 
         <h2 className="login-title">Theme Park Login</h2>
@@ -105,6 +151,8 @@ export function Login() {
         </p>
 
       </div>
+
     </div>
+
   );
 }
