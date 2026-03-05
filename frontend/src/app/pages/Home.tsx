@@ -35,7 +35,7 @@ export function Home() {
   const fetchData = async () => {
     try {
       const rideRes = await axios.get("http://localhost:5000/api/rides");
-      const foodRes = await axios.get("http://localhost:5000/api/food");
+      const foodRes = await axios.get("http://localhost:5000/api/foods");
 
       setRides(rideRes.data.slice(0, 4));
       setFood(foodRes.data.slice(0, 4));
