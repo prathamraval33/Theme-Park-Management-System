@@ -1,66 +1,69 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import "../../styles/profile.css";
 
-interface BookingItem {
-  title: string;
-  qty: number;
-  price: number;
-}
-
-interface Booking {
+interface RideBooking {
   booking_date: string;
-  items: BookingItem[];
+  ticket_quantity: number;
   total_amount: number;
   payment_status: string;
   qr_code: string;
 }
 
+interface FoodOrder {
+  items: {
+    food_name: string;
+    quantity: number;
+    price: number;
+  }[];
+  total_amount: number;
+  qr_code: string;
+  createdAt: string;
+}
+
 export function Profile() {
 
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookings, setBookings] = useState<RideBooking[]>([]);
+  const [foodOrders, setFoodOrders] = useState<FoodOrder[]>([]);
+  const [filterDate, setFilterDate] = useState("");
+
   const navigate = useNavigate();
 
   const userData = localStorage.getItem("user");
   const user = userData ? JSON.parse(userData) : null;
 
-  /* ========================== */
-  /* FETCH BOOKINGS */
-  /* ========================== */
-
   useEffect(() => {
 
     if (user?.email) {
-      fetchBookings();
+
+      fetchRideBookings();
+      fetchFoodOrders();
+
     }
 
   }, []);
 
-  const fetchBookings = async () => {
+  const fetchRideBookings = async () => {
 
-    try {
+    const res = await axios.get(
+      `http://localhost:5000/api/booking/user/${user.email}`
+    );
 
-      const res = await axios.get(
-        `http://localhost:5000/api/booking/user/${user.email}`
-      );
-
-      console.log("Bookings:", res.data);
-
-      setBookings(res.data);
-
-    } catch (error) {
-
-      console.error("Error loading bookings", error);
-
-    }
+    setBookings(res.data);
 
   };
 
-  /* ========================== */
-  /* LOGOUT */
-  /* ========================== */
+  const fetchFoodOrders = async () => {
+
+    const res = await axios.get(
+      `http://localhost:5000/api/foodorders/user/${user.email}`
+    );
+
+    setFoodOrders(res.data);
+
+  };
 
   const logout = () => {
 
@@ -70,123 +73,181 @@ export function Profile() {
   };
 
   if (!user) {
-    return <p className="profile-message">Please login first.</p>;
+    return <p>Please login first</p>;
   }
+
+  /* DATE FILTER */
+
+  const filteredBookings = bookings.filter(b =>
+    !filterDate ||
+    b.booking_date.slice(0,10) === filterDate
+  );
+
+  const filteredFoodOrders = foodOrders.filter(o =>
+    !filterDate ||
+    o.createdAt.slice(0,10) === filterDate
+  );
 
   return (
 
     <div className="profile-page">
 
-      {/* HEADER ACTIONS */}
+      {/* TOP BUTTONS */}
 
-      <div className="profile-actions">
-
-        <button onClick={() => navigate("/")}>
-          ← Back Home
-        </button>
-
-        <button className="logout-btn" onClick={logout}>
-          Logout
-        </button>
-
-      </div>
-
-
-      {/* PROFILE CARD */}
-
-      <motion.div
-        className="profile-card"
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
+      <button
+        className="home-btn"
+        onClick={() => navigate("/")}
       >
+        ← Home
+      </button>
 
-        <h2>👤 {user.name}</h2>
+      <button
+        className="logout-btn"
+        onClick={logout}
+      >
+        Logout
+      </button>
 
+      {/* USER INFO GLASS CARD */}
+
+      <div className="user-glass-card">
+
+        <h2>{user.name}</h2>
         <p>{user.email}</p>
 
         <span className="role-badge">
           {user.role}
         </span>
 
-      </motion.div>
+      </div>
 
+      {/* DATE FILTER */}
 
-      {/* BOOKINGS */}
+      <div className="filter-box">
 
-      <h2 className="ticket-title">🎟 My Bookings</h2>
+        <label>Filter by date</label>
 
-      {bookings.length === 0 ? (
+        <input
+          type="date"
+          value={filterDate}
+          onChange={(e) =>
+            setFilterDate(e.target.value)
+          }
+        />
 
-        <p className="profile-message">
-          No bookings found.
-        </p>
+      </div>
 
-      ) : (
+      {/* SPLIT VIEW */}
 
-        <div className="ticket-grid">
+      <div className="profile-split">
 
-          {bookings.map((booking, index) => (
+        {/* RIDE BOOKINGS */}
 
-            <motion.div
-              key={index}
-              className="ticket-card"
-              whileHover={{ scale: 1.03 }}
-            >
+        <div className="profile-section">
 
-              <div className="ticket-info">
+          <h3>🎢 Ride Bookings</h3>
 
-                <p>
-                  <strong>Date:</strong>{" "}
-                  {new Date(booking.booking_date).toDateString()}
-                </p>
+          {filteredBookings.length === 0 ? (
+            <p className="empty">No bookings</p>
+          ) : (
 
-                <p>
-                  <strong>Total:</strong> ₹{booking.total_amount}
-                </p>
+            filteredBookings.map((b,i)=>(
 
-                <span className={`status ${booking.payment_status}`}>
-                  {booking.payment_status}
-                </span>
+              <motion.div
+                key={i}
+                className="booking-card"
+                whileHover={{scale:1.03}}
+              >
 
+                <div>
 
-                {/* ITEMS */}
+                  <p>
+                    <strong>Date:</strong>{" "}
+                    {new Date(b.booking_date).toDateString()}
+                  </p>
 
-                <div className="ticket-items">
+                  <p>
+                    <strong>Tickets:</strong> {b.ticket_quantity}
+                  </p>
 
-                  {booking.items.map((item, i) => (
+                  <p>
+                    <strong>Total:</strong> ₹{b.total_amount}
+                  </p>
 
-                    <p key={i}>
-
-                      {item.title} → {item.qty} × ₹{item.price}
-
-                    </p>
-
-                  ))}
+                  <span className={`status ${b.payment_status}`}>
+                    {b.payment_status}
+                  </span>
 
                 </div>
 
-              </div>
+                {b.qr_code && (
+                  <img
+                    src={b.qr_code}
+                    className="qr-image"
+                  />
+                )}
 
+              </motion.div>
 
-              {/* QR */}
+            ))
 
-              {booking.qr_code && (
-
-                <img
-                  src={booking.qr_code}
-                  alt="QR Code"
-                  className="qr-image"
-                />
-
-              )}
-
-            </motion.div>
-
-          ))}
+          )}
 
         </div>
 
-      )}
+        {/* FOOD ORDERS */}
+
+        <div className="profile-section">
+
+          <h3>🍔 Food Orders</h3>
+
+          {filteredFoodOrders.length === 0 ? (
+            <p className="empty">No food orders</p>
+          ) : (
+
+            filteredFoodOrders.map((o,i)=>(
+
+              <motion.div
+                key={i}
+                className="booking-card"
+                whileHover={{scale:1.03}}
+              >
+
+                <div>
+
+                  <p>
+                    <strong>Date:</strong>{" "}
+                    {new Date(o.createdAt).toDateString()}
+                  </p>
+
+                  {o.items.map((item,index)=>(
+                    <p key={index}>
+                      {item.food_name} × {item.quantity}
+                    </p>
+                  ))}
+
+                  <p>
+                    <strong>Total:</strong> ₹{o.total_amount}
+                  </p>
+
+                </div>
+
+                {o.qr_code && (
+                  <img
+                    src={o.qr_code}
+                    className="qr-image"
+                  />
+                )}
+
+              </motion.div>
+
+            ))
+
+          )}
+
+        </div>
+
+      </div>
 
     </div>
 

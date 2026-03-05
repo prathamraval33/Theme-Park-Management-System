@@ -69,7 +69,7 @@
 
 /* ===== CARD ===== */
 .card {
-  background: #0b0f2a;
+  background: #0b0f2a !important;
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.08);
