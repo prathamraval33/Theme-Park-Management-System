@@ -95,6 +95,11 @@ export function TicketBooking() {
     0
   );
 
+  const totalTickets = cart.reduce(
+    (sum, item) => sum + item.qty,
+    0
+  );
+
   /* ============================ */
   /* BOOK TICKET */
   /* ============================ */
@@ -131,13 +136,6 @@ export function TicketBooking() {
       price: item.price
     }));
 
-    console.log("Booking Request:", {
-      email: user.email,
-      booking_date: visitDate,
-      items: cleanItems,
-      total_amount: total
-    });
-
     setLoading(true);
 
     try {
@@ -157,11 +155,14 @@ export function TicketBooking() {
 
       alert("Booking Successful 🎉");
 
+      /* reset cart after booking */
+
+      setCart([]);
+      setVisitDate("");
+
     } catch (error: any) {
 
       console.log("Booking Error:", error);
-      console.log("Server Response:", error.response?.data);
-
       alert(error.response?.data?.message || "Booking failed");
 
     } finally {
@@ -213,7 +214,7 @@ export function TicketBooking() {
             <input
               type="number"
               min="0"
-              placeholder="Add quantity"
+              defaultValue="0"
               onChange={(e) =>
                 updateCart(plan, parseInt(e.target.value) || 0)
               }
@@ -249,7 +250,12 @@ export function TicketBooking() {
         <div className="summary-divider"></div>
 
         <div className="summary-total">
-          <span>Total</span>
+          <span>Total Tickets</span>
+          <span>{totalTickets}</span>
+        </div>
+
+        <div className="summary-total">
+          <span>Total Amount</span>
           <span>₹{total}</span>
         </div>
 
@@ -299,7 +305,7 @@ export function TicketBooking() {
           </span>
 
           <span className="sticky-items">
-            {cart.length} ticket types selected
+            {totalTickets} tickets selected
           </span>
 
         </div>
