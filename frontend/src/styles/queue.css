@@ -1,49 +1,66 @@
-.queue-page {
-  min-height: 100vh;
-  background-color: #f8f9fa;
-  padding: 40px 20px;
+.queue-page{
+  min-height:100vh;
+  padding:40px 20px;
+
+  background:linear-gradient(135deg,#050816,#0a0f2c);
+  color:white;
 }
 
-.queue-container {
-  max-width: 1100px;
-  margin: auto;
+.queue-container{
+  max-width:1100px;
+  margin:auto;
+
+  padding:25px;
+
+  border-radius:16px;
+
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(12px);
+
+  border:1px solid rgba(255,255,255,0.08);
 }
 
-.queue-title {
-  margin-bottom: 25px;
-  font-size: 24px;
-  font-weight: bold;
+.queue-title{
+  margin-bottom:25px;
+  font-size:24px;
+  font-weight:bold;
+  text-align:center;
 }
 
-.queue-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+/* TABLE */
+
+.queue-table{
+  width:100%;
+  border-collapse:collapse;
 }
 
 .queue-table th,
-.queue-table td {
-  padding: 14px;
-  border-bottom: 1px solid #eee;
-  text-align: left;
+.queue-table td{
+  padding:14px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  text-align:left;
 }
 
-.queue-table th {
-  background-color: #e9ecef;
-  font-weight: 600;
+.queue-table th{
+  color:#ff9f43;
+  font-weight:600;
 }
 
-.queue-table tr:hover {
-  background-color: #f1f1f1;
+.queue-table tr:hover{
+  background:rgba(255,255,255,0.05);
 }
 
-.queue-note {
-  margin-top: 20px;
-  padding: 12px;
-  background: #fff3cd;
-  border-radius: 8px;
-  font-size: 14px;
+/* NOTE */
+
+.queue-note{
+  margin-top:20px;
+  padding:12px;
+
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+
+  border-radius:8px;
+  font-size:14px;
+
+  color:#bfc4ff;
 }

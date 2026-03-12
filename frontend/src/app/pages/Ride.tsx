@@ -40,19 +40,22 @@ export function Rides() {
   };
 
   return (
-    <div className="rides-container">
+    <div className="rides-container dark-page">
 
       <Link to="/">
-        <button className="back-btn">← Back to Home</button>
+        <button className="gradient-btn back-btn">← Back to Home</button>
       </Link>
 
-      <h2 className="rides-title">Available Rides</h2>
+      <h2 className="rides-title dark-title">🎢 Available Rides</h2>
 
       <div className="rides-grid">
+
         {rides.map((ride) => (
-          <div key={ride._id} className="ride-card">
+
+          <div key={ride._id} className="ride-card dark-card">
 
             <div className="ride-image-wrapper">
+
               <img
                 src={`/assets/${ride.image}`}
                 alt={ride.ride_name}
@@ -60,19 +63,26 @@ export function Rides() {
               />
 
               <button
-                className="book-btn"
+                className="gradient-btn book-btn"
                 onClick={() => navigate(`/tickets/${ride._id}`)}
               >
                 🎟 Book Ride
               </button>
+
             </div>
+
             <div className="ride-info">
+
               <h3>{ride.ride_name}</h3>
+
               <p>{ride.description}</p>
+
               <p>Capacity: {ride.capacity}</p>
+
               <p>
                 Waiting Time: {ride.avgDuration * ride.currentQueue} mins
               </p>
+
               <p className="ride-price">
                 Price: ₹{ride.price}
               </p>
@@ -82,11 +92,15 @@ export function Rides() {
               >
                 {ride.status}
               </span>
+
             </div>
 
           </div>
+
         ))}
+
       </div>
+
     </div>
   );
 }

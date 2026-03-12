@@ -30,9 +30,10 @@ export function QueueStatus() {
   };
 
   const getStatusColor = (status: string) => {
-    if (status === "Open") return "green";
-    if (status === "Maintenance") return "orange";
-    return "red";
+    if (status === "Open") return "#4cd137";
+    if (status === "Maintenance") return "#fbc531";
+    return "#ff4d4f";
+
   };
 
   return (
