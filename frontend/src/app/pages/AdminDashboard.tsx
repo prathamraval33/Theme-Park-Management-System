@@ -281,22 +281,23 @@ export function AdminDashboard() {
                           className="admin-btn btn-edit"
                           onClick={() => handleEditRide(ride)}
                         >
-                          Edit
+                          ✏Edit
                         </button>
 
                         <button
                           className="admin-btn btn-toggle"
                           onClick={() => handleToggleStatus(ride._id)}
                         >
-                          Toggle
+                          🔄Toggle
                         </button>
 
                         <button
                           className="admin-btn btn-delete"
                           onClick={() => handleDeleteRide(ride._id)}
                         >
-                          Delete
+                          🗑Delete
                         </button>
+                        
                       </td>
                     </tr>
                   ))}

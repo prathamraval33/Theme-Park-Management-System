@@ -63,6 +63,7 @@ export function Rides() {
   });
 
   return (
+<<<<<<< HEAD
 
     <div className="rides-page">
 
@@ -180,6 +181,67 @@ export function Rides() {
 
         })}
 
+=======
+    <div className="rides-container dark-page">
+
+      <Link to="/">
+        <button className="gradient-btn back-btn">← Back to Home</button>
+      </Link>
+
+      <h2 className="rides-title dark-title">🎢 Available Rides</h2>
+
+      <div className="rides-grid">
+
+        {rides.map((ride) => (
+
+          <div key={ride._id} className="ride-card dark-card">
+
+            <div className="ride-image-wrapper">
+
+              <img
+                src={`/assets/${ride.image}`}
+                alt={ride.ride_name}
+                className="ride-image"
+              />
+
+              <button
+                className="gradient-btn book-btn"
+                onClick={() => navigate(`/tickets/${ride._id}`)}
+              >
+                🎟 Book Ride
+              </button>
+
+            </div>
+
+            <div className="ride-info">
+
+              <h3>{ride.ride_name}</h3>
+
+              <p>{ride.description}</p>
+
+              <p>Capacity: {ride.capacity}</p>
+
+              <p>
+                Waiting Time: {ride.avgDuration * ride.currentQueue} mins
+              </p>
+
+              <p className="ride-price">
+                Price: ₹{ride.price}
+              </p>
+
+              <span
+                className={`status-badge ${getStatusClass(ride.status)}`}
+              >
+                {ride.status}
+              </span>
+
+            </div>
+
+          </div>
+
+        ))}
+
+>>>>>>> 5213d191aba596755f96ae34470b58cad0c931c5
       </div>
 
     </div>
