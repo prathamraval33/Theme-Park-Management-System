@@ -1,174 +1,270 @@
-.rides-container {
-  padding: 20px;
-  max-width: 1200px;
-  margin: auto;
+.rides-page{
+padding:40px;
+background:linear-gradient(135deg,#050816,#0a0f2c);
+min-height:100vh;
+color:white;
+font-family:"Poppins",sans-serif;
 }
 
-.rides-title {
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 20px;
+/* HEADER */
+
+.rides-header{
+text-align:center;
+margin-bottom:25px;
+
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(12px);
+
+border-radius:14px;
+padding:30px;
+
+border:1px solid rgba(255,255,255,0.1);
 }
 
-.back-btn {
-  margin-bottom: 15px;
-  padding: 8px 14px;
-  border: none;
-  background: linear-gradient(45deg,#007bff,#00c6ff);
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: 0.3s;
+.rides-header h1{
+font-size:32px;
+margin-bottom:6px;
 }
 
-.back-btn:hover {
-  transform: translateY(-2px);
+.rides-header p{
+color:#bfc4ff;
 }
 
-/* Grid */
-.rides-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
+/* SEARCH */
+
+.ride-search{
+display:flex;
+justify-content:center;
+margin-bottom:20px;
 }
 
-/* Card */
-.ride-card {
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-  transition: transform 0.3s, box-shadow 0.3s;
+.ride-search input{
+padding:10px 14px;
+border-radius:8px;
+border:none;
+outline:none;
+
+width:260px;
+
+background:#0b0f2a;
+color:white;
+
+border:1px solid rgba(255,255,255,0.1);
 }
 
-.ride-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 28px rgba(0,0,0,0.2);
+/* CATEGORY */
+
+.ride-categories{
+display:flex;
+justify-content:center;
+gap:12px;
+margin-bottom:25px;
+flex-wrap:wrap;
 }
 
-/* Image section */
-.ride-image-wrapper {
-  position: relative;
-  height: 180px;
-  overflow: hidden;
+.ride-categories button{
+padding:8px 18px;
+border:none;
+border-radius:25px;
+background:#161c3a;
+color:white;
+cursor:pointer;
+transition:0.3s;
 }
 
-.ride-image,
-.ride-gif {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.ride-categories button:hover{
+background:#242c59;
 }
 
-.ride-gif {
-  position: absolute;
-  top: 0;
-  left: 0;
-  opacity: 0;
-  transition: opacity 0.4s;
+.ride-categories .active{
+background:linear-gradient(90deg,#ff7a18,#ff3c8e);
 }
 
-.ride-card:hover .ride-gif {
-  opacity: 1;
+/* GRID */
+
+.rides-grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+gap:24px;
 }
 
-/* Book button */
-.book-btn {
-  position: absolute;
-  bottom: 12px;
-  right: 12px;
-  padding: 8px 14px;
-  background: linear-gradient(45deg,#ff7e5f,#feb47b);
-  border: none;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-  opacity: 0;
-  transition: 0.3s;
+/* CARD */
+
+.ride-card{
+background:#0b0f2a;
+border-radius:16px;
+overflow:hidden;
+
+border:1px solid rgba(255,255,255,0.08);
+
+display:flex;
+flex-direction:column;
+
+height:360px;
+transition:0.3s;
 }
 
-.ride-card:hover .book-btn {
-  opacity: 1;
+.ride-card:hover{
+box-shadow:0 0 12px rgba(255,120,50,0.6);
 }
 
-/* Info */
-.ride-info {
-  padding: 15px;
+/* IMAGE */
+
+.ride-image{
+position:relative;
+height:180px;
+overflow:hidden;
 }
 
-.ride-info h3 {
-  margin-bottom: 6px;
+.ride-main-img{
+width:100%;
+height:100%;
+object-fit:cover;
+transition:transform 0.4s;
 }
 
-/* Status badges */
-.status-badge {
-  display: inline-block;
-  margin-top: 8px;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-weight: bold;
+.ride-card:hover .ride-main-img{
+transform:scale(1.08);
 }
 
-.status-open {
-  background: #d4edda;
-  color: #155724;
+.ride-gif{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+object-fit:cover;
+opacity:0;
+transition:opacity 0.4s;
 }
 
-.status-closed {
-  background: #f8d7da;
-  color: #721c24;
+.ride-card:hover .ride-gif{
+opacity:1;
 }
 
-.status-maintenance {
-  background: #fff3cd;
-  color: #856404;
+/* QUEUE BADGE */
+
+.queue-badge{
+position:absolute;
+top:10px;
+right:10px;
+padding:4px 10px;
+border-radius:8px;
+font-size:12px;
+font-weight:bold;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
-  .rides-title {
-    font-size: 22px;
-  }
+.queue-green{
+background:#00ffae33;
+color:#00ffae;
 }
 
-.ride-price {
-  font-weight: bold;
-  color: #ff6600;
-  font-size: 18px;
-}
-.ride-image-wrapper {
-  position: relative;
-  overflow: hidden;
-  border-radius: 12px;
+.queue-yellow{
+background:#ffc10733;
+color:#ffc107;
 }
 
-.ride-image {
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-  transition: transform 0.4s ease;
+.queue-red{
+background:#ff4d4d33;
+color:#ff4d4d;
 }
 
-.ride-image-wrapper:hover .ride-image {
-  transform: scale(1.08);
-}
-.book-btn {
-  position: absolute;
-  bottom: 15px;
-  left: 50%;
-  transform: translate(-50%, 20px);
-  padding: 10px 25px;
-  border: none;
-  border-radius: 25px;
-  background: linear-gradient(45deg, #ff512f, #dd2476);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  opacity: 0;
-  transition: all 0.3s ease;
+/* CONTENT */
+
+.ride-content{
+padding:16px;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+flex:1;
 }
 
-.ride-image-wrapper:hover .book-btn {
-  opacity: 1;
-  transform: translate(-50%, 0);
+.ride-content h3{
+font-size:18px;
+margin-bottom:6px;
+}
+
+.ride-desc{
+font-size:13px;
+color:#bfc4ff;
+margin-bottom:8px;
+height:36px;
+overflow:hidden;
+}
+
+.ride-meta{
+display:flex;
+justify-content:space-between;
+font-size:13px;
+color:#8b90d4;
+margin-bottom:10px;
+}
+
+.ride-price{
+font-size:18px;
+font-weight:600;
+color:#ff9f43;
+}
+
+/* BUTTON */
+
+.ride-book-btn{
+padding:8px 16px;
+border:none;
+border-radius:8px;
+
+background:linear-gradient(90deg,#ff7a18,#ff3c8e);
+
+color:white;
+font-weight:600;
+
+cursor:pointer;
+transition:0.25s;
+}
+
+.ride-book-btn:hover{
+transform:translateY(-2px);
+box-shadow:0 0 10px rgba(255,120,50,0.7);
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+
+.ride-search input{
+width:100%;
+}
+
+}
+
+@media(max-width:600px){
+
+.rides-page{
+padding:20px;
+}
+
+.rides-header h1{
+font-size:24px;
+}
+
+.rides-grid{
+grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+}
+
+.ride-card{
+height:340px;
+}
+
+.ride-image{
+height:150px;
+}
+
+}
+
+@media(max-width:400px){
+
+.rides-grid{
+grid-template-columns:1fr;
+}
+
 }
