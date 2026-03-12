@@ -39,7 +39,10 @@ export const router = createBrowserRouter([
         path: "rides",
         element: <Rides />,
       },
-
+      {
+        path: "tickets",
+        element: <TicketBooking />,
+      },
       // ✅ UPDATED HERE (Dynamic ride ID)
       {
         path: "tickets/:id",
@@ -61,8 +64,8 @@ export const router = createBrowserRouter([
         element: <Contact />,
       },
       {
-        path:"Profile",
-        element:<Profile/>,
+        path: "profile",
+        element: <Profile />,
       },
 
       {
