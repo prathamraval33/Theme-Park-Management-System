@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import "../../styles/ride.css";
 
 interface Ride {
@@ -13,16 +13,15 @@ interface Ride {
   currentQueue: number;
   price: number;
   status: string;
-  category: string;
   image: string;
   gif?: string;
+  category: string;
 }
 
 export function Rides() {
 
   const [rides, setRides] = useState<Ride[]>([]);
-  const [category, setCategory] = useState("All");
-  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("All");
 
   const navigate = useNavigate();
 
@@ -35,217 +34,122 @@ export function Rides() {
       const res = await axios.get("http://localhost:5000/api/rides");
       setRides(res.data);
     } catch (err) {
-      console.error("Ride fetch error", err);
+      console.error(err);
     }
   };
 
-  const waitTime = (ride: Ride) =>
-    ride.avgDuration * ride.currentQueue;
+  const waitTime = (ride: Ride) => ride.currentQueue * ride.avgDuration;
 
-  const waitColor = (wait: number) => {
-    if (wait <= 10) return "queue-green";
-    if (wait <= 25) return "queue-yellow";
-    return "queue-red";
+  const waitColor = (time: number) => {
+    if (time <= 5) return "green";
+    if (time <= 15) return "yellow";
+    return "red";
   };
 
-  const filteredRides = rides.filter((ride) => {
-
-    const matchCategory =
-      category === "All" || ride.category === category;
-
-    const matchSearch =
-      ride.ride_name
-        .toLowerCase()
-        .includes(search.toLowerCase());
-
-    return matchCategory && matchSearch;
-
-  });
+  const filteredRides =
+    filter === "All"
+      ? rides
+      : rides.filter((ride) => ride.category === filter);
 
   return (
-<<<<<<< HEAD
-
     <div className="rides-page">
-
-      {/* HEADER */}
 
       <div className="rides-header">
 
-        <h1>🎢 Theme Park Attractions</h1>
+        <h1>🎢 Park Rides</h1>
 
-        <p>
-          Discover thrilling adventures and unforgettable rides
-        </p>
+        <div className="ride-filters">
 
-      </div>
+          {["All", "Thrill", "Water", "Kids", "Family"].map((cat) => (
+            <button
+              key={cat}
+              className={`filter-btn ${filter === cat ? "active" : ""}`}
+              onClick={() => setFilter(cat)}
+            >
+              {cat}
+            </button>
+          ))}
 
-      {/* SEARCH */}
-
-      <div className="ride-search">
-
-      
-
-      </div>
-
-      {/* CATEGORY FILTER */}
-
-      <div className="ride-categories">
-
-        {["All","Thrill","Water","Kids","Family"].map((cat)=>(
-          <button
-            key={cat}
-            className={category===cat ? "active" : ""}
-            onClick={()=>setCategory(cat)}
-          >
-            {cat}
-          </button>
-        ))}
+        </div>
 
       </div>
-
-      {/* GRID */}
 
       <div className="rides-grid">
 
-        {filteredRides.map((ride)=>{
+        <AnimatePresence>
 
-          const wait = waitTime(ride);
+          {filteredRides.map((ride) => {
 
-          return (
+            const wait = waitTime(ride);
 
-            <motion.div
-              key={ride._id}
-              className="ride-card"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type:"spring", stiffness:200 }}
-            >
+            return (
 
-              {/* IMAGE */}
+              <motion.div
+                key={ride._id}
+                layout
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.85 }}
+                transition={{ duration: 0.35 }}
+                whileHover={{ scale: 1.04 }}
+                className="ride-card"
+              >
 
-              <div className="ride-image">
-
-                <img
-                  src={ride.image}
-                  alt={ride.ride_name}
-                  className="ride-main-img"
-                />
-
-                {ride.gif && (
+                <div className="ride-image">
 
                   <img
-                    src={ride.gif}
-                    className="ride-gif"
-                    alt="preview"
+                    src={ride.image}
+                    alt={ride.ride_name}
+                    className="ride-main-img"
                   />
 
-                )}
+                  {ride.gif && (
+                    <img
+                      src={ride.gif}
+                      alt="preview"
+                      className="ride-gif"
+                    />
+                  )}
 
-                <div className={`queue-badge ${waitColor(wait)}`}>
-                  {wait} min wait
-                </div>
-
-              </div>
-
-              {/* CONTENT */}
-
-              <div className="ride-content">
-
-                <h3>{ride.ride_name}</h3>
-
-                <p className="ride-desc">
-                  {ride.description}
-                </p>
-
-                <div className="ride-meta">
-
-                  <span>
-                    Capacity: {ride.capacity}
-                  </span>
-
-                 
+                  <div className={`queue-badge ${waitColor(wait)}`}>
+                    {wait} min wait
+                  </div>
 
                 </div>
 
-                <button
-                  className="ride-book-btn"
-                  onClick={()=>navigate(`/tickets/${ride._id}`)}
-                >
-                  🎟 Book Ride
-                </button>
+                <div className="ride-content">
 
-              </div>
+                  <h3>{ride.ride_name}</h3>
 
-            </motion.div>
+                  <p>{ride.description}</p>
 
-          );
+                  <div className="ride-meta">
 
-        })}
+                    <span>Capacity: {ride.capacity}</span>
 
-=======
-    <div className="rides-container dark-page">
+                    
 
-      <Link to="/">
-        <button className="gradient-btn back-btn">← Back to Home</button>
-      </Link>
+                  </div>
 
-      <h2 className="rides-title dark-title">🎢 Available Rides</h2>
+                  <button
+                    className="ride-book-btn"
+                    onClick={() => navigate(`/tickets/${ride._id}`)}
+                  >
+                    🎟 Book Ride
+                  </button>
 
-      <div className="rides-grid">
+                </div>
 
-        {rides.map((ride) => (
+              </motion.div>
 
-          <div key={ride._id} className="ride-card dark-card">
+            );
 
-            <div className="ride-image-wrapper">
+          })}
 
-              <img
-                src={`/assets/${ride.image}`}
-                alt={ride.ride_name}
-                className="ride-image"
-              />
+        </AnimatePresence>
 
-              <button
-                className="gradient-btn book-btn"
-                onClick={() => navigate(`/tickets/${ride._id}`)}
-              >
-                🎟 Book Ride
-              </button>
-
-            </div>
-
-            <div className="ride-info">
-
-              <h3>{ride.ride_name}</h3>
-
-              <p>{ride.description}</p>
-
-              <p>Capacity: {ride.capacity}</p>
-
-              <p>
-                Waiting Time: {ride.avgDuration * ride.currentQueue} mins
-              </p>
-
-              <p className="ride-price">
-                Price: ₹{ride.price}
-              </p>
-
-              <span
-                className={`status-badge ${getStatusClass(ride.status)}`}
-              >
-                {ride.status}
-              </span>
-
-            </div>
-
-          </div>
-
-        ))}
-
->>>>>>> 5213d191aba596755f96ae34470b58cad0c931c5
       </div>
 
     </div>
-
   );
-
 }
