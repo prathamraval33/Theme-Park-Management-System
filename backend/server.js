@@ -29,6 +29,7 @@ app.use("/api/booking", require("./routes/bookingRoute"));
 app.use("/api/foods", require("./routes/foodRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/foodorders", require("./routes/foodOrderRoute"));
+app.use("/api/reviews", require("./routes/reviewRoute"));
 
 // Global Error Handler
 app.use((err, req, res, next) => {

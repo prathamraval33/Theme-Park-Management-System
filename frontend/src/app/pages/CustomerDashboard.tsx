@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
-import { Navigation } from '@/app/components/Navigation';
-import { Footer } from '@/app/components/Footer';
+import { Navigation } from '../components/Navigation';
+import { Footer } from '../components/Footer';
 
 export function CustomerDashboard() {
   return (
