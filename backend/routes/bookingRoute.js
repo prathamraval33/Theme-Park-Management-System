@@ -23,11 +23,11 @@ router.post("/create", async (req, res) => {
     /* VALIDATION */
     /* ============================== */
 
-    if (!email || !booking_date || !items || items.length === 0) {
-      return res.status(400).json({
-        message: "Missing booking information"
-      });
-    }
+  if (!email || !booking_date || !Array.isArray(items) || items.length === 0) {
+  return res.status(400).json({
+    message: "Missing or invalid booking data"
+  });
+}
 
     const parsedDate = new Date(booking_date);
 

@@ -3,6 +3,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 require("dotenv").config();
+;
 
 const connectDB = require("./config/db");
 
@@ -30,6 +31,7 @@ app.use("/api/foods", require("./routes/foodRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/foodorders", require("./routes/foodOrderRoute"));
 app.use("/api/reviews", require("./routes/reviewRoute"));
+app.use("/api/user", require("./routes/userRoutes"));
 
 // Global Error Handler
 app.use((err, req, res, next) => {

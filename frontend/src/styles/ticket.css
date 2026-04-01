@@ -1,26 +1,50 @@
+/* ============================ */
+/* PAGE */
+/* ============================ */
+
 .ticket-page{
   padding:30px;
   min-height:100vh;
   background:linear-gradient(135deg,#050816,#0a0f2c);
   color:white;
+  padding-bottom:110px;
 }
 
+/* ============================ */
 /* TITLE */
+/* ============================ */
 
 .ticket-title{
   text-align:center;
   margin-bottom:30px;
+  font-size:28px;
+  font-weight:600;
 }
 
-/* PLAN GRID */
+/* ============================ */
+/* MAIN LAYOUT */
+/* ============================ */
+
+.ticket-layout{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:30px;
+  margin-top:20px;
+}
+
+/* ============================ */
+/* LEFT GRID */
+/* ============================ */
 
 .plan-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
-  gap:20px;
+  grid-template-columns:repeat(2,1fr);
+  gap:25px;
 }
 
+/* ============================ */
 /* PLAN CARD */
+/* ============================ */
 
 .plan-card{
   padding:20px;
@@ -32,44 +56,107 @@
   border:1px solid rgba(255,255,255,0.08);
 
   text-align:center;
-  transition:0.3s;
+  transition:0.3s ease;
+}
+
+.plan-card:hover{
+  transform:translateY(-6px) scale(1.02);
+  box-shadow:0 10px 25px rgba(255,120,50,0.25);
 }
 
 .plan-card.selected{
   border:2px solid #ff7a18;
-  box-shadow:0 0 15px rgba(255,120,50,0.6);
-  transform:scale(1.02);
+  box-shadow:0 0 18px rgba(255,120,50,0.7);
+}
+
+/* TEXT */
+
+.plan-card h3{
+  margin-bottom:6px;
+  font-size:18px;
 }
 
 .plan-card h2{
   color:#ff9f43;
+  margin-bottom:10px;
 }
 
 .plan-card ul{
   list-style:none;
   padding:0;
+  margin-bottom:12px;
 }
 
-.plan-card input{
-  width:80%;
-  padding:8px;
-  border-radius:8px;
+.plan-card li{
+  font-size:14px;
+  color:#d1d6ff;
+  margin:4px 0;
+}
+
+/* ============================ */
+/* QUANTITY CONTROL */
+/* ============================ */
+
+.qty-control{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:12px;
+  margin-top:12px;
+}
+
+.qty-control button{
+  width:38px;
+  height:38px;
+
+  border-radius:50%;
   border:none;
+
+  background:rgba(255,255,255,0.1);
+  backdrop-filter:blur(10px);
+
+  color:white;
+  font-size:18px;
+
+  cursor:pointer;
+  transition:0.3s ease;
 }
 
-/* SUMMARY */
+.qty-control button:hover{
+  background:linear-gradient(90deg,#ff7a18,#ff3c8e);
+  transform:scale(1.1);
+  box-shadow:0 0 10px rgba(255,120,50,0.6);
+}
 
-.booking-summary{
-  margin-top:30px;
-  padding:20px;
+.qty-control span{
+  min-width:32px;
+  text-align:center;
+  font-size:16px;
+  font-weight:500;
+}
 
+/* ============================ */
+/* RIGHT PANEL */
+/* ============================ */
+
+.right-section{
+  position:sticky;
+  top:100px;
+  height:fit-content;
+}
+
+.empty-state,
+.live-summary{
+  padding:25px;
   border-radius:16px;
 
   background:rgba(255,255,255,0.05);
-  backdrop-filter:blur(10px);
+  backdrop-filter:blur(12px);
 
   border:1px solid rgba(255,255,255,0.08);
 }
+
+/* SUMMARY */
 
 .summary-item{
   display:grid;
@@ -80,36 +167,20 @@
 .summary-divider{
   height:1px;
   background:rgba(255,255,255,0.1);
-  margin:10px 0;
+  margin:12px 0;
 }
 
 .summary-total{
   display:flex;
   justify-content:space-between;
-  font-weight:bold;
   color:#ff9f43;
+  font-weight:600;
+  margin-top:6px;
 }
 
-.booking-summary input{
-  width:100%;
-  padding:10px;
-  margin-top:10px;
-  border-radius:8px;
-  border:none;
-}
-
-/* QR */
-
-.qr-section{
-  margin-top:20px;
-  text-align:center;
-}
-
-.qr-img{
-  width:160px;
-}
-
-/* STICKY BOOKING BAR */
+/* ============================ */
+/* STICKY BAR */
+/* ============================ */
 
 .sticky-booking-bar{
   position:fixed;
@@ -118,7 +189,7 @@
   width:100%;
 
   background:rgba(10,15,44,0.95);
-  backdrop-filter:blur(10px);
+  backdrop-filter:blur(14px);
 
   display:flex;
   justify-content:space-between;
@@ -127,9 +198,14 @@
   padding:15px 25px;
 
   border-top:1px solid rgba(255,255,255,0.1);
+  z-index:100;
 }
 
-/* INFO */
+.sticky-left{
+  display:flex;
+  align-items:center;
+  gap:20px;
+}
 
 .sticky-info{
   display:flex;
@@ -147,23 +223,47 @@
   color:#bfc4ff;
 }
 
+/* DATE BOX */
+
+.date-box{
+  padding:10px 14px;
+  border-radius:12px;
+
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(10px);
+
+  border:1px solid rgba(255,255,255,0.1);
+
+  cursor:pointer;
+  font-size:14px;
+
+  transition:0.3s;
+}
+
+.date-box:hover{
+  border:1px solid #ff7a18;
+  box-shadow:0 0 10px rgba(255,120,50,0.4);
+}
+
 /* BUTTON */
 
 .sticky-book-btn{
-  padding:12px 20px;
+  padding:12px 22px;
 
   border:none;
-  border-radius:10px;
+  border-radius:12px;
 
   background:linear-gradient(90deg,#ff7a18,#ff3c8e);
   color:white;
 
-  font-weight:bold;
+  font-weight:600;
   cursor:pointer;
+  transition:0.3s;
 }
 
 .sticky-book-btn:hover:not(:disabled){
   transform:scale(1.05);
+  box-shadow:0 0 15px rgba(255,120,50,0.6);
 }
 
 .sticky-book-btn:disabled{
@@ -171,72 +271,96 @@
   cursor:not-allowed;
 }
 
-/* prevent overlap */
+/* ============================ */
+/* CALENDAR MODAL */
+/* ============================ */
 
-.ticket-page{
-  padding-bottom:90px;
+.calendar-modal{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+
+  background:rgba(0,0,0,0.6);
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  z-index:200;
 }
+
+.calendar-card{
+  padding:20px;
+  border-radius:18px;
+
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(15px);
+
+  border:1px solid rgba(255,255,255,0.1);
+}
+
+/* CLOSE BUTTON */
+
+.calendar-close{
+  margin-top:12px;
+  padding:8px 14px;
+
+  border:none;
+  border-radius:10px;
+
+  background:linear-gradient(90deg,#ff7a18,#ff3c8e);
+  color:white;
+
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.calendar-close:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 10px rgba(255,120,50,0.6);
+}
+
 /* ============================ */
 /* RESPONSIVE DESIGN */
 /* ============================ */
 
-/* Tablets */
+/* Tablet */
 
 @media (max-width:1024px){
 
-  .ticket-page{
-    padding:20px;
+  .ticket-layout{
+    grid-template-columns:1fr;
+  }
+
+  .right-section{
+    position:static;
   }
 
   .plan-grid{
     grid-template-columns:repeat(2,1fr);
   }
 
-  .plan-card{
-    padding:18px;
-  }
-
-  .booking-summary{
-    padding:18px;
-  }
-
 }
 
-
-/* Large Phones */
+/* Mobile */
 
 @media (max-width:768px){
 
-  .ticket-title{
-    font-size:22px;
-  }
-
   .plan-grid{
     grid-template-columns:1fr;
-    gap:18px;
-  }
-
-  .plan-card{
-    padding:16px;
-  }
-
-  .plan-card input{
-    width:100%;
-  }
-
-  .summary-item{
-    grid-template-columns:1fr auto;
-    row-gap:4px;
-  }
-
-  .summary-item span:last-child{
-    text-align:right;
   }
 
   .sticky-booking-bar{
     flex-direction:column;
-    gap:10px;
-    padding:14px 16px;
+    gap:12px;
+    padding:14px;
+  }
+
+  .sticky-left{
+    width:100%;
+    justify-content:space-between;
   }
 
   .sticky-book-btn{
@@ -245,8 +369,7 @@
 
 }
 
-
-/* Small Phones */
+/* Small Mobile */
 
 @media (max-width:480px){
 
@@ -259,60 +382,26 @@
   }
 
   .plan-card{
-    padding:14px;
-  }
-
-  .plan-card h3{
-    font-size:16px;
-  }
-
-  .plan-card h2{
-    font-size:20px;
-  }
-
-  .plan-card li{
-    font-size:13px;
-  }
-
-  .plan-card input{
-    padding:7px;
-    font-size:14px;
-  }
-
-  .booking-summary{
     padding:16px;
   }
 
-  .summary-total{
-    font-size:15px;
+  .qty-control button{
+    width:34px;
+    height:34px;
   }
 
   .sticky-total{
     font-size:16px;
   }
 
-  .sticky-items{
-    font-size:12px;
-  }
-
-  .sticky-book-btn{
-    padding:10px;
-    font-size:14px;
-  }
-
 }
 
-
-/* Ultra Small Devices */
+/* Ultra Small */
 
 @media (max-width:350px){
 
   .plan-card h2{
     font-size:18px;
-  }
-
-  .sticky-total{
-    font-size:15px;
   }
 
 }

@@ -1,8 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 import "../../styles/ticket.css";
-
+import toast from "react-hot-toast";
 interface Plan {
   title: string;
   price: number;
@@ -20,307 +22,261 @@ export function TicketBooking() {
   const [visitDate, setVisitDate] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const [qrCode, setQrCode] = useState("");
-
-  const today = new Date().toISOString().split("T")[0];
-
-  /* ============================ */
-  /* TICKET PLANS */
-  /* ============================ */
+  const [showCalendar, setShowCalendar] = useState(false);
 
   const plans: Plan[] = [
-    {
-      title: "Kids Regular",
-      price: 1000,
-      features: ["All Rides", "Limited Food", "Regular Entry"]
-    },
-    {
-      title: "Kids VIP",
-      price: 1500,
-      features: ["All Rides", "Unlimited Buffet", "Fast Entry"]
-    },
-    {
-      title: "Adult Regular",
-      price: 1500,
-      features: ["All Rides", "Limited Food", "Regular Entry"]
-    },
-    {
-      title: "Adult VIP",
-      price: 2500,
-      features: ["All Rides", "Unlimited Buffet", "VIP Fast Entry"]
-    }
+    { title: "Kids Regular", price: 1000, features: ["All Rides", "Limited Food"] },
+    { title: "Kids VIP", price: 1500, features: ["Unlimited Buffet", "Fast Entry"] },
+    { title: "Adult Regular", price: 1500, features: ["All Rides", "Regular Entry"] },
+    { title: "Adult VIP", price: 2500, features: ["VIP Fast Entry", "Unlimited Buffet"] }
   ];
 
-  /* ============================ */
-  /* UPDATE CART */
-  /* ============================ */
+  /* Smart Pricing */
+  const getPrice = (plan: Plan) => {
+    if (!visitDate) return plan.price;
+    const day = new Date(visitDate).getDay();
+    return (day === 0 || day === 6) ? plan.price + 300 : plan.price;
+  };
 
+  /* Update Cart */
   const updateCart = (plan: Plan, qty: number) => {
 
     if (qty <= 0) {
-      setCart(cart.filter((item) => item.title !== plan.title));
+      setCart(cart.filter((i) => i.title !== plan.title));
       return;
     }
 
-    const newItem: CartItem = {
+    const newItem = {
       title: plan.title,
-      price: plan.price,
+      price: getPrice(plan),
       qty
     };
 
-    const exists = cart.find((item) => item.title === plan.title);
+    const exists = cart.find((i) => i.title === plan.title);
 
     if (exists) {
-
-      setCart(
-        cart.map((item) =>
-          item.title === plan.title ? newItem : item
-        )
-      );
-
+      setCart(cart.map((i) => i.title === plan.title ? newItem : i));
     } else {
-
       setCart([...cart, newItem]);
-
     }
-
   };
 
-  /* ============================ */
-  /* TOTAL PRICE */
-  /* ============================ */
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const totalTickets = cart.reduce((s, i) => s + i.qty, 0);
 
-  const total = cart.reduce(
-    (sum, item) => sum + item.price * item.qty,
-    0
-  );
-
-  const totalTickets = cart.reduce(
-    (sum, item) => sum + item.qty,
-    0
-  );
-
-  /* ============================ */
-  /* BOOK TICKET */
-  /* ============================ */
-
+  /* Booking */
   const handleBooking = async () => {
 
-    const userData = localStorage.getItem("user");
+  const userData = localStorage.getItem("user");
 
-    if (!userData) {
-      alert("Please login first");
-      return;
-    }
+  if (!userData) {
+    alert("Please login first");
+    return;
+  }
 
-    const user = JSON.parse(userData);
+  const user = JSON.parse(userData);
 
-    if (!user.email) {
-      alert("Session expired. Please login again.");
-      return;
-    }
+  if (!user.email) {
+    alert("Session expired. Login again.");
+    return;
+  }
 
-    if (!visitDate) {
-      alert("Please select visit date");
-      return;
-    }
+  if (!visitDate) {
+    alert("Select date");
+    return;
+  }
 
-    if (cart.length === 0) {
-      alert("Please select tickets");
-      return;
-    }
+  if (cart.length === 0) {
+    alert("Select tickets");
+    return;
+  }
 
-    const cleanItems = cart.map((item) => ({
-      title: item.title,
-      qty: item.qty,
-      price: item.price
-    }));
+  setLoading(true);
 
-    setLoading(true);
+  try {
 
-    try {
+    const res = await axios.post(
+      "http://localhost:5000/api/booking/create",
+      {
+        email: user.email, // 🔥 REQUIRED
+        booking_date: visitDate,
+        items: cart.map(item => ({
+          title: item.title,
+          qty: item.qty,
+          price: item.price
+        })),
+        total_amount: total,
+        payment_status: "Paid" // 🔥 REQUIRED
+      }
+    );
 
-      const res = await axios.post(
-        "http://localhost:5000/api/booking/create",
-        {
-          email: user.email,
-          booking_date: visitDate,
-          items: cleanItems,
-          total_amount: total,
-          payment_status: "Paid"
-        }
-      );
+    console.log("SUCCESS:", res.data);
 
-      setQrCode(res.data.qr_code);
+  toast.success("🎉 Booking Successful!");
 
-      alert("Booking Successful 🎉");
+    setCart([]);
+    setVisitDate("");
 
-      /* reset cart after booking */
+  } catch (err: any) {
 
-      setCart([]);
-      setVisitDate("");
+    console.log("ERROR:", err.response?.data);
 
-    } catch (error: any) {
+    alert(err.response?.data?.message || "Booking failed");
 
-      console.log("Booking Error:", error);
-      alert(error.response?.data?.message || "Booking failed");
-
-    } finally {
-
-      setLoading(false);
-
-    }
-
-  };
-
-  /* ============================ */
-  /* UI */
-  /* ============================ */
-
+  } finally {
+    setLoading(false);
+  }
+};
   return (
 
     <div className="ticket-page">
 
-      <h2 className="ticket-title">🎟 Theme Park Ticket Booking</h2>
+      <h2 className="ticket-title">🎟 Ticket Booking</h2>
 
-      {/* ============================ */}
-      {/* PLAN GRID */}
-      {/* ============================ */}
+      <div className="ticket-layout">
 
-      <div className="plan-grid">
+        {/* LEFT */}
+        <div className="left-section">
 
-        {plans.map((plan, index) => (
+          <div className="plan-grid">
 
-          <motion.div
-            key={index}
-            className={`plan-card ${
-              cart.some((c) => c.title === plan.title)
-                ? "selected"
-                : ""
-            }`}
-            whileHover={{ scale: 1.05 }}
-          >
+            {plans.map((plan, i) => {
 
-            <h3>{plan.title}</h3>
+              const qty = cart.find(c => c.title === plan.title)?.qty || 0;
 
-            <h2>₹{plan.price}</h2>
+              return (
+                <motion.div
+                  key={i}
+                  className={`plan-card ${qty > 0 ? "selected" : ""}`}
+                  whileHover={{ scale: 1.05 }}
+                >
 
-            <ul>
-              {plan.features.map((f, i) => (
-                <li key={i}>✔ {f}</li>
+                  <h3>{plan.title}</h3>
+                  <h2>₹{getPrice(plan)}</h2>
+
+                  <ul>
+                    {plan.features.map((f, idx) => (
+                      <li key={idx}>✔ {f}</li>
+                    ))}
+                  </ul>
+
+                  {/* 🔥 NEW QUANTITY CONTROL */}
+                  <div className="qty-control">
+
+                    <button onClick={() => updateCart(plan, qty - 1)}>−</button>
+
+                    <span>{qty}</span>
+
+                    <button onClick={() => updateCart(plan, qty + 1)}>+</button>
+
+                  </div>
+
+                </motion.div>
+              );
+            })}
+
+          </div>
+
+        </div>
+
+        {/* RIGHT */}
+        <div className="right-section">
+
+          {cart.length === 0 ? (
+
+            <div className="empty-state">
+              <h3>🎟 No Tickets Selected</h3>
+              <p>Select tickets to see breakdown</p>
+            </div>
+
+          ) : (
+
+            <div className="live-summary">
+
+              <h3>🧾 Ticket Breakdown</h3>
+
+              {cart.map((item, i) => (
+                <div key={i} className="summary-item">
+                  <span>{item.title}</span>
+                  <span>{item.qty} × ₹{item.price}</span>
+                  <span>₹{item.qty * item.price}</span>
+                </div>
               ))}
-            </ul>
 
-            <input
-              type="number"
-              min="0"
-              defaultValue="0"
-              onChange={(e) =>
-                updateCart(plan, parseInt(e.target.value) || 0)
-              }
+              <div className="summary-divider"></div>
+
+              <div className="summary-total">
+                <span>Total Tickets</span>
+                <span>{totalTickets}</span>
+              </div>
+
+              <div className="summary-total">
+                <span>Total Amount</span>
+                <span>₹{total}</span>
+              </div>
+
+            </div>
+
+          )}
+
+        </div>
+
+      </div>
+
+      {/* CALENDAR */}
+      {showCalendar && (
+        <div className="calendar-modal">
+          <div className="calendar-card">
+
+            <Calendar
+              minDate={new Date()} /* 🔥 FIX */
+              onChange={(date: any) => {
+                const d = new Date(date).toISOString().split("T")[0];
+                setVisitDate(d);
+                setShowCalendar(false);
+              }}
             />
 
-          </motion.div>
+            <button
+              className="calendar-close"
+              onClick={() => setShowCalendar(false)}
+            >
+              ✖ Close
+            </button>
 
-        ))}
-
-      </div>
-
-
-      {/* ============================ */}
-      {/* BOOKING SUMMARY */}
-      {/* ============================ */}
-
-      <div className="booking-summary">
-
-        <h3>🧾 Booking Summary</h3>
-
-        {cart.length === 0 ? (
-          <p className="empty-msg">No tickets selected</p>
-        ) : (
-          cart.map((item, i) => (
-            <div key={i} className="summary-item">
-              <span>{item.title}</span>
-              <span>{item.qty} × ₹{item.price}</span>
-              <span>₹{item.qty * item.price}</span>
-            </div>
-          ))
-        )}
-
-        <div className="summary-divider"></div>
-
-        <div className="summary-total">
-          <span>Total Tickets</span>
-          <span>{totalTickets}</span>
+          </div>
         </div>
-
-        <div className="summary-total">
-          <span>Total Amount</span>
-          <span>₹{total}</span>
-        </div>
-
-        <label>Select Visit Date</label>
-
-        <input
-          type="date"
-          min={today}
-          value={visitDate}
-          onChange={(e) => setVisitDate(e.target.value)}
-        />
-
-      </div>
-
-
-      {/* ============================ */}
-      {/* QR CODE TICKET */}
-      {/* ============================ */}
-
-      {qrCode && (
-
-        <div className="qr-section">
-
-          <h3>Your Ticket</h3>
-
-          <img
-            src={qrCode}
-            alt="QR Ticket"
-            className="qr-img"
-          />
-
-        </div>
-
       )}
 
-
-      {/* ============================ */}
-      {/* STICKY BOOKING BAR */}
-      {/* ============================ */}
-
+      {/* STICKY */}
       <div className="sticky-booking-bar">
 
-        <div className="sticky-info">
+        <div className="sticky-left">
 
-          <span className="sticky-total">
-            Total: ₹{total}
-          </span>
+          <div className="sticky-info">
+            <span className="sticky-total">₹{total}</span>
+            <span className="sticky-items">{totalTickets} tickets</span>
+          </div>
 
-          <span className="sticky-items">
-            {totalTickets} tickets selected
-          </span>
+          <div
+            className="date-box"
+            onClick={() => setShowCalendar(true)}
+          >
+            {visitDate ? `📅 ${visitDate}` : "Select Date"}
+          </div>
 
         </div>
 
         <button
           onClick={handleBooking}
           className="sticky-book-btn"
-          disabled={loading || cart.length === 0 || !visitDate}
+          disabled={loading}
         >
-          {loading ? "Processing..." : "Book Tickets 🎟"}
+          {loading ? "Processing..." : "Book Now 🎟"}
         </button>
 
       </div>
 
     </div>
-
   );
 }

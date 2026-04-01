@@ -32,7 +32,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["Customer", "TicketStaff", "RideStaff", "FoodStaff", "Admin"],
       default: "Customer"
-    }
+    },
+     profilePic: {
+    type: String,
+    default: ""
+  },
+    
   },
   {
     timestamps: true

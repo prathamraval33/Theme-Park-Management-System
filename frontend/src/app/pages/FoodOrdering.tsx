@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import "../../styles/food.css";
+import toast from "react-hot-toast";
 
 interface FoodItem {
   _id: string;
@@ -140,8 +141,8 @@ export function FoodOrdering() {
 
       setQrCode(res.data.qr_code);
       setCart([]);
-
-      alert("Order placed successfully!");
+toast.success("🎉Order placed successfully!");
+     
 
     } catch {
 

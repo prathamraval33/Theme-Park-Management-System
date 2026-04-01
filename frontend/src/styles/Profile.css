@@ -9,20 +9,23 @@ font-family:"Poppins",sans-serif;
 position:relative;
 }
 
-/* ================= TOP BUTTONS ================= */
+/* ================= HEADER ================= */
+
+.profile-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+/* BUTTONS */
 
 .home-btn{
-position:absolute;
-top:20px;
-left:20px;
-
 padding:8px 16px;
 border:none;
-border-radius:8px;
-
-background:#1c2147;
+border-radius:10px;
+background:rgba(255,255,255,0.08);
 color:white;
-
 cursor:pointer;
 transition:0.3s;
 }
@@ -33,17 +36,11 @@ background:#2b3270;
 }
 
 .logout-btn{
-position:absolute;
-top:20px;
-right:20px;
-
 padding:8px 16px;
 border:none;
-border-radius:8px;
-
+border-radius:10px;
 background:linear-gradient(90deg,#ff7a18,#ff3c8e);
 color:white;
-
 cursor:pointer;
 transition:0.3s;
 }
@@ -53,28 +50,63 @@ transform:translateY(-2px);
 box-shadow:0 0 12px rgba(255,120,50,0.6);
 }
 
-/* ================= GLASS USER CARD ================= */
+/* ================= USER CARD ================= */
 
 .user-glass-card{
-max-width:480px;
-margin:70px auto 30px auto;
+max-width:500px;
+margin:20px auto 30px;
 
-padding:28px;
+padding:30px;
 
 background:rgba(255,255,255,0.08);
-backdrop-filter:blur(14px);
+backdrop-filter:blur(16px);
 
-border-radius:16px;
+border-radius:20px;
 border:1px solid rgba(255,255,255,0.15);
 
 text-align:center;
 
-box-shadow:0 0 20px rgba(0,0,0,0.4);
+box-shadow:0 0 25px rgba(0,0,0,0.5);
+position:relative;
 }
+
+/* PROFILE IMAGE */
+
+.profile-pic-wrapper{
+display:flex;
+justify-content:center;
+margin-bottom:15px;
+position:relative;
+}
+
+.profile-pic{
+width:90px;
+height:90px;
+border-radius:50%;
+object-fit:cover;
+border:2px solid rgba(255,255,255,0.2);
+}
+
+.upload-btn{
+position:absolute;
+bottom:0;
+right:calc(50% - 45px);
+
+background:#ff3c8e;
+border:none;
+border-radius:50%;
+width:28px;
+height:28px;
+color:white;
+cursor:pointer;
+font-size:14px;
+}
+
+/* TEXT */
 
 .user-glass-card h2{
 font-size:26px;
-margin-bottom:6px;
+margin-bottom:5px;
 }
 
 .user-glass-card p{
@@ -82,19 +114,32 @@ font-size:14px;
 color:#bfc4ff;
 }
 
-/* ROLE BADGE */
+/* ROLE */
 
 .role-badge{
 display:inline-block;
-
 margin-top:8px;
-padding:4px 12px;
-
-border-radius:6px;
-
+padding:5px 14px;
+border-radius:8px;
 background:linear-gradient(90deg,#ff7a18,#ff3c8e);
-
 font-size:12px;
+}
+
+/* EDIT BUTTON */
+
+.edit-btn{
+margin-top:12px;
+padding:8px 16px;
+border:none;
+border-radius:10px;
+background:rgba(255,255,255,0.08);
+color:white;
+cursor:pointer;
+transition:0.3s;
+}
+
+.edit-btn:hover{
+background:rgba(255,255,255,0.2);
 }
 
 /* ================= DATE FILTER ================= */
@@ -104,17 +149,12 @@ text-align:center;
 margin-bottom:25px;
 }
 
-.filter-box label{
-margin-right:8px;
-font-size:14px;
-color:#bfc4ff;
-}
-
-.filter-box input{
-padding:8px 12px;
-border-radius:6px;
-border:none;
-outline:none;
+.date-box{
+display:inline-block;
+padding:10px 18px;
+border-radius:12px;
+background:rgba(255,255,255,0.08);
+cursor:pointer;
 }
 
 /* ================= MAIN SPLIT ================= */
@@ -123,74 +163,53 @@ outline:none;
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:30px;
-align-items:start;
 }
 
-/* ================= SECTIONS ================= */
+/* ================= SECTION ================= */
 
 .profile-section{
-background:#0b0f2a;
-
 padding:22px;
-border-radius:16px;
-
+border-radius:18px;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(12px);
 border:1px solid rgba(255,255,255,0.08);
-
-box-shadow:0 0 15px rgba(0,0,0,0.4);
 }
 
 .profile-section h3{
-font-size:20px;
 margin-bottom:12px;
-color:#e6e9ff;
 }
 
-/* ================= BOOKING CARDS ================= */
+/* ================= CARDS ================= */
 
 .booking-card{
 display:flex;
 justify-content:space-between;
-align-items:center;
-
 gap:20px;
-
 padding:16px;
-margin-top:14px;
-
-background:#151b3d;
-
+margin-top:12px;
+background:rgba(255,255,255,0.05);
 border-radius:12px;
-
-border:1px solid rgba(255,255,255,0.06);
-
-transition:0.25s;
+transition:0.3s;
 }
 
 .booking-card:hover{
 transform:translateY(-4px);
-box-shadow:0 0 12px rgba(255,120,50,0.6);
+box-shadow:0 0 12px rgba(255,120,50,0.5);
 }
 
-/* ================= TEXT ================= */
+/* TEXT */
 
 .booking-card p{
-margin:4px 0;
 font-size:14px;
 color:#bfc4ff;
 }
 
-/* ================= STATUS ================= */
+/* STATUS */
 
 .status{
-display:inline-block;
-
 padding:4px 10px;
-
 border-radius:6px;
-
 font-size:12px;
-
-margin-top:6px;
 }
 
 .status.Paid{
@@ -198,56 +217,34 @@ background:rgba(0,255,150,0.2);
 color:#00ffae;
 }
 
-.status.Pending{
-background:rgba(255,200,0,0.2);
-color:#ffc107;
-}
-
-.status.Failed{
-background:rgba(255,0,0,0.2);
-color:#ff4d4d;
-}
-
-/* ================= QR IMAGE ================= */
+/* QR */
 
 .qr-image{
 width:90px;
-height:90px;
-
 background:white;
-padding:6px;
-
+padding:5px;
 border-radius:8px;
-
-object-fit:contain;
 }
 
-/* ================= EMPTY MESSAGE ================= */
+/* DOWNLOAD */
 
-.empty{
-color:#8b90d4;
+.download-btn{
 margin-top:10px;
-font-size:14px;
+padding:8px 12px;
+border:none;
+border-radius:8px;
+background:linear-gradient(90deg,#ff7a18,#ff3c8e);
+color:white;
+cursor:pointer;
 }
 
 /* ================= RESPONSIVE ================= */
 
-/* Tablet */
-
 @media(max-width:1000px){
-
-.profile-page{
-padding:30px;
-}
-
 .profile-split{
 grid-template-columns:1fr;
-gap:22px;
 }
-
 }
-
-/* Mobile */
 
 @media(max-width:600px){
 
@@ -256,50 +253,16 @@ padding:20px;
 }
 
 .user-glass-card{
-margin-top:60px;
 padding:20px;
-}
-
-.user-glass-card h2{
-font-size:22px;
 }
 
 .booking-card{
 flex-direction:column;
-align-items:flex-start;
 }
 
 .qr-image{
 align-self:center;
 margin-top:10px;
-}
-
-.home-btn{
-top:10px;
-left:10px;
-}
-
-.logout-btn{
-top:10px;
-right:10px;
-}
-
-}
-
-/* Small mobile */
-
-@media(max-width:400px){
-
-.profile-page{
-padding:16px;
-}
-
-.booking-card{
-padding:12px;
-}
-
-.profile-section h3{
-font-size:18px;
 }
 
 }
