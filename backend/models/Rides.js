@@ -26,16 +26,13 @@ const rideSchema = new mongoose.Schema(
     min: 1
   },
 
+  // ✅ UPDATED DURATION FIELD
   avgDuration: {
     type: Number,
-    default: 2,
-    min: 1
-  },
-
-  currentQueue: {
-    type: Number,
-    default: 0,
-    min: 0
+    required: true,   // 🔥 make it required
+    min: 1,
+    default: 25
+           // minutes
   },
 
   price: {
@@ -66,4 +63,4 @@ const rideSchema = new mongoose.Schema(
 }
 );
 
-module.exports = mongoose.model("Ride", rideSchema);
+module.exports = mongoose.models.Ride || mongoose.model("Ride", rideSchema);

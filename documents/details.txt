@@ -1,0 +1,20 @@
+ADMIN ACCOUNT
+Email: admin@themepark.com
+Password: Admin@123
+Role: Admin
+
+RIDE STAFF
+Email: ride@themepark.com
+Password: Ride@123
+Role: RideStaff
+
+TICKET STAFF
+Email: ticket@themepark.com
+Password: Ticket@123
+Role: TicketStaff
+
+FOOD STAFF
+Email: food@themepark.com
+Password: Food@123
+Role: FoodStaff
+mongodb://127.0.0.1:27017

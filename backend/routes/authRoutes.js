@@ -3,45 +3,40 @@ const bcrypt = require("bcrypt");
 const router = express.Router();
 const User = require("../models/User");
 
-/* ===========================
-            SIGNUP
-=========================== */
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+/* ================= SIGNUP ================= */
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
 
-    // 1️⃣ Validate required fields
     if (!name || !email || !phone || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
     const lowerEmail = email.toLowerCase();
 
-    // 2️⃣ Check existing user
     const existingUser = await User.findOne({ email: lowerEmail });
     if (existingUser) {
       return res.status(400).json({ message: "Email already exists" });
     }
 
-    // 3️⃣ Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 4️⃣ Auto increment user_id (college-level simple logic)
-    const count = await User.countDocuments();
-
     const newUser = new User({
-      user_id: count + 1,
       name,
       email: lowerEmail,
       phone,
       password: hashedPassword,
-      role: "Customer"   // ✅ Always customer from signup
+      role: "Customer"
     });
 
     await newUser.save();
 
     res.status(201).json({
-      message: "Signup successful"
+      message: "Signup successful",
+      user: newUser
     });
 
   } catch (error) {
@@ -50,9 +45,8 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-/* ===========================
-            LOGIN
-=========================== */
+
+/* ================= LOGIN ================= */
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -69,21 +63,21 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "User not found" });
     }
 
+    if (user.password === "google_auth") {
+      return res.status(400).json({
+        message: "Please login with Google"
+      });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid password" });
     }
 
-    // ✅ IMPORTANT CHANGE HERE
     res.json({
       message: "Login successful",
-      user: {
-        _id: user._id,          // ⭐ Mongo ObjectId
-        name: user.name,
-        email: user.email,
-        role: user.role
-      }
+      user
     });
 
   } catch (error) {
@@ -92,13 +86,43 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// TEMP ROUTE - REMOVE BEFORE SUBMISSION
-router.get("/all-users", async (req, res) => {
+
+/* ================= GOOGLE AUTH ================= */
+router.post("/google", async (req, res) => {
   try {
-    const users = await User.find().select("-password");
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching users" });
+    const { token } = req.body;
+
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID
+    });
+
+    const payload = ticket.getPayload();
+
+    const { email, name, picture } = payload;
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = new User({
+        name,
+        email,
+        password: "google_auth",
+        role: "Customer",
+        profilePic: picture
+      });
+
+      await user.save();
+    }
+
+    res.json({
+      message: "Google login success",
+      user
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Google auth failed" });
   }
 });
 

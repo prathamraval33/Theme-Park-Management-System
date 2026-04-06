@@ -81,9 +81,7 @@ export function Navigation() {
                     Profile
                   </button>
 
-                  <button onClick={() => navigate(getDashboardRoute())}>
-                    Dashboard
-                  </button>
+                 
 
                   <button onClick={logout} className="logout-red">
                     Logout

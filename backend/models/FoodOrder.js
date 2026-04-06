@@ -29,4 +29,4 @@ const foodOrderSchema = new mongoose.Schema({
   timestamps:true
 });
 
-module.exports = mongoose.model("FoodOrder",foodOrderSchema);
+module.exports = mongoose.models.FoodOrder || mongoose.model("FoodOrder", foodOrderSchema);

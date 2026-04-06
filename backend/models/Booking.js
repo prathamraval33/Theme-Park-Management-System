@@ -38,4 +38,4 @@ const bookingSchema = new mongoose.Schema(
   timestamps: true
 });
 
-module.exports = mongoose.model("Booking", bookingSchema);
+module.exports = mongoose.models.Booking || mongoose.model("Booking", bookingSchema);

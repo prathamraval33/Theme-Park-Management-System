@@ -85,3 +85,24 @@
 .signup-footer a:hover {
   text-decoration: underline;
 }
+
+.google-section{
+  margin-top:15px;
+  text-align:center;
+}
+
+.google-section p{
+  color:#bfc4ff;
+  margin-bottom:10px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 25px;
+  }
+
+  .login-title {
+    font-size: 22px;
+  }
+}

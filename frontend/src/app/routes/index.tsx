@@ -4,8 +4,8 @@ import { Footer } from "../components/Footer";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 
 import { Home } from "../pages/Home";
-import { Login } from "../pages/Login";
-import { Signup } from "../pages/Signup";
+import Login from "../pages/Login";
+import Signup from "../pages/Signup";
 import { TicketBooking } from "../pages/TicketBooking";
 import { QueueStatus } from "../pages/QueueStatus";
 import { FoodOrdering } from "../pages/FoodOrdering";
@@ -14,6 +14,8 @@ import { Contact } from "../pages/Contact";
 import { Rides } from "../pages/Ride";
 import { Profile } from "../pages/Profile";
 import { RideStaffDashboard } from "../pages/ridestaff/RideStaffDashboard";
+
+/* ================= LAYOUT ================= */
 
 function MainLayout() {
   return (
@@ -25,48 +27,23 @@ function MainLayout() {
   );
 }
 
+/* ================= ROUTES ================= */
+
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
     children: [
-      {
-        index: true,
-        element: <Home />,
-      },
+      { index: true, element: <Home /> },
 
-      {
-        path: "rides",
-        element: <Rides />,
-      },
-      {
-        path: "tickets",
-        element: <TicketBooking />,
-      },
-      // ✅ UPDATED HERE (Dynamic ride ID)
-      {
-        path: "tickets/:id",
-        element: <TicketBooking />,
-      },
+      { path: "rides", element: <Rides /> },
+      { path: "tickets", element: <TicketBooking /> },
+      { path: "tickets/:id", element: <TicketBooking /> },
 
-      {
-        path: "queue",
-        element: <QueueStatus />,
-      },
-
-      {
-        path: "food",
-        element: <FoodOrdering />,
-      },
-
-      {
-        path: "contact",
-        element: <Contact />,
-      },
-      {
-        path: "profile",
-        element: <Profile />,
-      },
+      { path: "queue", element: <QueueStatus /> },
+      { path: "food", element: <FoodOrdering /> },
+      { path: "contact", element: <Contact /> },
+      { path: "profile", element: <Profile /> },
 
       {
         path: "admin",
@@ -88,11 +65,11 @@ export const router = createBrowserRouter([
     ],
   },
 
+  // 🔥 AUTH ROUTES (OUTSIDE LAYOUT)
   {
     path: "/login",
     element: <Login />,
   },
-
   {
     path: "/signup",
     element: <Signup />,

@@ -105,7 +105,15 @@
 .login-footer a:hover {
   text-decoration: underline;
 }
+.google-section{
+margin-top:15px;
+text-align:center;
+}
 
+.google-section p{
+color:#bfc4ff;
+margin-bottom:10px;
+}
 /* Responsive */
 @media (max-width: 480px) {
   .login-card {

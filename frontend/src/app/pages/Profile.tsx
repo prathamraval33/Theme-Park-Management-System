@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Calendar from "react-calendar";
 import jsPDF from "jspdf";
-import "../../styles/profile.css";
+import "../../styles/Profile.css";
 
 export function Profile() {
 
@@ -243,14 +243,28 @@ export function Profile() {
       {/* DATE FILTER */}
       <div className="filter-box">
 
-        <div
-          className="date-box"
-          onClick={() => setShowCalendar(true)}
-        >
-          {filterDate || "Select Date"}
-        </div>
+  <div className="filter-actions">
 
-      </div>
+    <div
+      className="date-box"
+      onClick={() => setShowCalendar(true)}
+    >
+      {filterDate || "Select Date"}
+    </div>
+
+    {/* 🔥 RESET BUTTON */}
+    {filterDate && (
+      <button
+        className="reset-btn"
+        onClick={() => setFilterDate("")}
+      >
+        Reset ✖
+      </button>
+    )}
+
+  </div>
+
+</div>
 
       {/* CALENDAR */}
       {showCalendar && (

@@ -41,4 +41,4 @@ const foodSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Food", foodSchema);
+module.exports = mongoose.models.Food || mongoose.model("Food", foodSchema);

@@ -1,117 +1,117 @@
-import { useState, FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import axios from "axios";
-import "../../styles/Signup.css";
+import { useNavigate, Link } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
+import "../../styles/signup.css";
 
-export function Signup() {
-  const [name, setName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [error, setError] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+export default function Signup() {
+
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    password: ""
+  });
 
   const navigate = useNavigate();
 
-  const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
+  const handleChange = (e: any) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSignup = async (e: any) => {
     e.preventDefault();
-    setError("");
-
-    if (!name.trim() || !email.trim() || !phone.trim() || !password.trim()) {
-      setError("Please fill all fields");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
 
     try {
-      setLoading(true);
-
-      await axios.post("http://localhost:5000/api/auth/signup", {
-        name: name.trim(),
-        email: email.trim(),
-        phone: phone.trim(),
-        password
-      });
-
-      alert("Signup Successful! Please login.");
-
+      await axios.post("http://localhost:5000/api/auth/signup", form);
+      alert("Signup successful");
       navigate("/login");
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Signup failed");
+    }
+  };
 
-    } catch (error: any) {
-      setError(error.response?.data?.message || "Signup Failed");
-    } finally {
-      setLoading(false);
+  /* ================= GOOGLE ================= */
+
+  const handleGoogleSignup = async (credentialResponse: any) => {
+    try {
+
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/google",
+        { token: credentialResponse.credential }
+      );
+
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      alert("Account created with Google 🎉");
+      navigate("/");
+
+    } catch (err) {
+      alert("Google signup failed");
     }
   };
 
   return (
     <div className="signup-page">
+
       <div className="signup-card">
 
         <h2 className="signup-title">Create Account</h2>
 
-        {error && (
-          <p style={{ color: "#ff4d4d", marginBottom: "10px" }}>
-            {error}
-          </p>
-        )}
-
-        <form onSubmit={handleSignup} className="signup-form">
+        <form className="signup-form" onSubmit={handleSignup}>
 
           <input
-            type="text"
+            className="signup-input"
+            name="name"
             placeholder="Full Name"
-            className="signup-input"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={handleChange}
+            required
           />
 
           <input
+            className="signup-input"
             type="email"
-            placeholder="Email Address"
-            className="signup-input"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            name="email"
+            placeholder="Email"
+            onChange={handleChange}
+            required
           />
 
           <input
-            type="tel"
+            className="signup-input"
+            name="phone"
             placeholder="Phone Number"
-            className="signup-input"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={handleChange}
+            required
           />
 
           <input
+            className="signup-input"
             type="password"
+            name="password"
             placeholder="Password"
-            className="signup-input"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handleChange}
+            required
           />
 
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            className="signup-input"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-
-          <button
-            type="submit"
-            className="signup-button"
-            disabled={loading}
-          >
-            {loading ? "Creating Account..." : "Sign Up"}
+          <button className="signup-button" type="submit">
+            Sign Up
           </button>
 
         </form>
+
+        {/* 🔥 GOOGLE SIGNUP */}
+        <div className="google-section">
+          <p>OR</p>
+
+          <GoogleLogin
+            onSuccess={handleGoogleSignup}
+            onError={() => console.log("Google Error")}
+          />
+        </div>
 
         <div className="signup-footer">
           Already have an account? <Link to="/login">Login</Link>
