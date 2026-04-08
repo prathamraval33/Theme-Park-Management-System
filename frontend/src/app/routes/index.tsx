@@ -9,11 +9,16 @@ import Signup from "../pages/Signup";
 import { TicketBooking } from "../pages/TicketBooking";
 import { QueueStatus } from "../pages/QueueStatus";
 import { FoodOrdering } from "../pages/FoodOrdering";
-import { AdminDashboard } from "../pages/AdminDashboard";
+import { AdminLayout } from "../pages/admin/AdminLayout";
 import { Contact } from "../pages/Contact";
 import { Rides } from "../pages/Ride";
 import { Profile } from "../pages/Profile";
+import { Dashboard } from "../pages/admin/Dashboard";
+import { RideManagement } from "../pages/admin/RideManagement";
+import { FoodManagement } from "../pages/admin/FoodManagement";
+import { UserManagement } from "../pages/admin/UserManagement";
 import { RideStaffDashboard } from "../pages/ridestaff/RideStaffDashboard";
+import VerifyOTP from "../pages/VerifyOTP";
 
 /* ================= LAYOUT ================= */
 
@@ -45,14 +50,25 @@ export const router = createBrowserRouter([
       { path: "contact", element: <Contact /> },
       { path: "profile", element: <Profile /> },
 
-      {
+     /* {
         path: "admin",
         element: (
           <ProtectedRoute allowedRoles={["Admin"]}>
             <AdminDashboard />
           </ProtectedRoute>
         ),
-      },
+      },*/
+
+      {
+  path: "/admin",
+  element: <AdminLayout />,
+  children: [
+    { index: true, element: <Dashboard /> },
+    { path: "rides", element: <RideManagement /> },
+    { path: "food", element: <FoodManagement /> },
+    { path: "users", element: <UserManagement /> }
+  ]
+},
 
       {
         path: "ride-staff",
@@ -74,4 +90,9 @@ export const router = createBrowserRouter([
     path: "/signup",
     element: <Signup />,
   },
+  {
+  path: "/verify-otp",
+  element: <VerifyOTP />
+},
+
 ]);

@@ -1,13 +1,18 @@
-.signup-page {
+/* ================= PAGE ================= */
+
+.otp-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+
   background: url("/assets/login_back.jpg") no-repeat center center/cover;
   padding-top: 80px;
 }
 
-.signup-card {
+/* ================= CARD ================= */
+
+.otp-card {
   width: 100%;
   max-width: 400px;
   padding: 35px;
@@ -21,90 +26,119 @@
   text-align: center;
 }
 
-.signup-title {
+/* ================= TITLE ================= */
+
+.otp-title {
   color: white;
-  margin-bottom: 25px;
+  margin-bottom: 10px;
   font-size: 26px;
   font-weight: bold;
 }
 
-.signup-form {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+/* ================= SUBTEXT ================= */
+
+.otp-subtext {
+  color: #bfc4ff;
+  font-size: 14px;
+  margin-bottom: 20px;
 }
 
-.signup-input {
-  padding: 12px;
+/* ================= INPUT ================= */
+
+.otp-input {
+  padding: 14px;
+  width: 100%;
+
   border-radius: 16px;
   border: 1px solid rgba(255,200,150,0.4);
+
   background: rgba(255,255,255,0.15);
   color: white;
-  font-size: 14px;
+
+  font-size: 18px;
+  text-align: center;
+  letter-spacing: 6px;
+
   outline: none;
   transition: 0.3s ease;
 }
 
-.signup-input::placeholder {
+.otp-input::placeholder {
   color: rgba(255,255,255,0.75);
 }
 
-.signup-input:focus {
+.otp-input:focus {
   border-color: #ff7e5f;
   box-shadow: 0 0 12px rgba(255,126,95,0.6);
 }
 
-.signup-button {
+/* ================= BUTTON ================= */
+
+.otp-button {
+  margin-top: 18px;
   padding: 12px;
+  width: 100%;
+
   border-radius: 18px;
   border: none;
+
   color: white;
   font-weight: bold;
   cursor: pointer;
+
   background: linear-gradient(90deg, #ff7e5f, #feb47b);
   transition: 0.3s ease;
 }
 
-.signup-button:hover {
+.otp-button:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 20px rgba(255,126,95,0.45);
 }
 
-.signup-footer {
+.otp-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ================= RESEND ================= */
+
+.otp-resend {
   margin-top: 18px;
   color: white;
   font-size: 14px;
 }
 
-.signup-footer a {
+.otp-resend span {
   color: #ffb07c;
   font-weight: bold;
-  text-decoration: none;
+  cursor: pointer;
 }
 
-.signup-footer a:hover {
+.otp-resend span:hover {
   text-decoration: underline;
 }
 
-.google-section{
-  margin-top:15px;
-  text-align:center;
-  border-radius: 25%;
-  
+/* ================= GOOGLE SECTION MATCH ================= */
+
+.google-section {
+  margin-top: 15px;
+  text-align: center;
 }
 
-.google-section p{
-  color:#bfc4ff;
-  margin-bottom:10px;
-}
+/* ================= RESPONSIVE ================= */
 
-/* Responsive */
 @media (max-width: 480px) {
-  .login-card {
+
+  .otp-card {
     padding: 25px;
   }
 
-  .login-title {
+  .otp-title {
     font-size: 22px;
+  }
+
+  .otp-input {
+    font-size: 16px;
+    letter-spacing: 4px;
   }
 }

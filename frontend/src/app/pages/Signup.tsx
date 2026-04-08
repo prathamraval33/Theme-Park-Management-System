@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
+import toast from "react-hot-toast";
 import "../../styles/signup.css";
 
 export default function Signup() {
@@ -16,10 +17,7 @@ export default function Signup() {
   const navigate = useNavigate();
 
   const handleChange = (e: any) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value
-    });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSignup = async (e: any) => {
@@ -27,18 +25,22 @@ export default function Signup() {
 
     try {
       await axios.post("http://localhost:5000/api/auth/signup", form);
-      alert("Signup successful");
-      navigate("/login");
+
+      localStorage.setItem("otp_email", form.email);
+
+      toast.success("OTP sent 📩");
+
+      navigate("/verify-otp", {
+        state: { email: form.email }
+      });
+
     } catch (err: any) {
-      alert(err.response?.data?.message || "Signup failed");
+      toast.error(err.response?.data?.message || "Signup failed");
     }
   };
 
-  /* ================= GOOGLE ================= */
-
   const handleGoogleSignup = async (credentialResponse: any) => {
     try {
-
       const res = await axios.post(
         "http://localhost:5000/api/auth/google",
         { token: credentialResponse.credential }
@@ -46,75 +48,35 @@ export default function Signup() {
 
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      alert("Account created with Google 🎉");
-      navigate("/");
+      navigate(res.data.redirect);
 
-    } catch (err) {
-      alert("Google signup failed");
+    } catch {
+      toast.error("Google signup failed");
     }
   };
 
   return (
     <div className="signup-page">
-
       <div className="signup-card">
 
         <h2 className="signup-title">Create Account</h2>
 
         <form className="signup-form" onSubmit={handleSignup}>
+          <input className="signup-input" name="name" placeholder="Full Name" onChange={handleChange} required />
+          <input className="signup-input" name="email" placeholder="Email" onChange={handleChange} required />
+          <input className="signup-input" name="phone" placeholder="Phone" onChange={handleChange} required />
+          <input className="signup-input" type="password" name="password" placeholder="Password" onChange={handleChange} required />
 
-          <input
-            className="signup-input"
-            name="name"
-            placeholder="Full Name"
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            className="signup-input"
-            type="email"
-            name="email"
-            placeholder="Email"
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            className="signup-input"
-            name="phone"
-            placeholder="Phone Number"
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            className="signup-input"
-            type="password"
-            name="password"
-            placeholder="Password"
-            onChange={handleChange}
-            required
-          />
-
-          <button className="signup-button" type="submit">
-            Sign Up
-          </button>
-
+          <button className="signup-button">Sign Up</button>
         </form>
 
-        {/* 🔥 GOOGLE SIGNUP */}
         <div className="google-section">
           <p>OR</p>
-
-          <GoogleLogin
-            onSuccess={handleGoogleSignup}
-            onError={() => console.log("Google Error")}
-          />
+          <GoogleLogin onSuccess={handleGoogleSignup} />
         </div>
 
         <div className="signup-footer">
-          Already have an account? <Link to="/login">Login</Link>
+          Already have account? <Link to="/login">Login</Link>
         </div>
 
       </div>

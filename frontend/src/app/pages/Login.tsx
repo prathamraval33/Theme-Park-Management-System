@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import "../../styles/login.css";
+import toast from "react-hot-toast";
 
 export default function Login() {
 
@@ -38,6 +39,7 @@ export default function Login() {
 
       // ✅ Smooth redirect
       navigate("/", { replace: true });
+      toast.success("🎉 Login Successful!");
 
     } catch (err: any) {
       alert(err.response?.data?.message || "Login failed");

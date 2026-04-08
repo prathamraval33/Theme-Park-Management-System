@@ -1,8 +1,12 @@
 const express = require("express");
 const router = express.Router();
+
 const User = require("../models/User");
-const Booking = require("../models/Booking");
 const Ride = require("../models/Rides");
+const Food = require("../models/food");
+const Booking = require("../models/Booking");
+
+const io = require("../server");
 
 /* ===========================
         DASHBOARD STATS
@@ -12,6 +16,7 @@ router.get("/stats", async (req, res) => {
     const totalUsers = await User.countDocuments();
     const totalBookings = await Booking.countDocuments();
     const totalRides = await Ride.countDocuments();
+    const totalFoods = await Food.countDocuments();
 
     const revenueData = await Booking.aggregate([
       {
@@ -22,138 +27,272 @@ router.get("/stats", async (req, res) => {
       }
     ]);
 
-    const totalRevenue = revenueData.length > 0
-      ? revenueData[0].totalRevenue
-      : 0;
+    const totalRevenue =
+      revenueData.length > 0 ? revenueData[0].totalRevenue : 0;
 
-    res.status(200).json({
+    res.json({
       totalUsers,
       totalBookings,
       totalRides,
+      totalFoods,
       totalRevenue
     });
 
   } catch (error) {
-    console.error("Stats Error:", error);
+    console.error(error);
     res.status(500).json({ message: "Server Error" });
   }
 });
 
 /* ===========================
-      RECENT BOOKINGS
+        USERS
 =========================== */
-router.get("/recent-bookings", async (req, res) => {
+
+// GET ALL USERS
+router.get("/users", async (req, res) => {
   try {
-    const bookings = await Booking.find()
-      .sort({ createdAt: -1 }) // newest first
-      .limit(5);
-
-    res.status(200).json(bookings);
-
-  } catch (error) {
-    console.error("Recent Bookings Error:", error);
+    const users = await User.find().select("-password");
+    res.json(users);
+  } catch {
     res.status(500).json({ message: "Server Error" });
   }
 });
+
+// UPDATE ROLE
+router.put("/users/:id", async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { role: req.body.role },
+      { new: true }
+    );
+
+    io.emit("adminUpdated");
+
+    res.json(user);
+  } catch {
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// DELETE USER
+router.delete("/users/:id", async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+
+    io.emit("adminUpdated");
+
+    res.json({ message: "User deleted" });
+  } catch {
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
 /* ===========================
-        RIDE MANAGEMENT
+        RIDES
 =========================== */
 
-// 1️⃣ Get All Rides
+// GET ALL RIDES
 router.get("/rides", async (req, res) => {
   try {
     const rides = await Ride.find();
-    res.status(200).json(rides);
-  } catch (error) {
-    console.error("Fetch Rides Error:", error);
+    res.json(rides);
+  } catch {
     res.status(500).json({ message: "Server Error" });
   }
 });
 
-// 2️⃣ Add New Ride
+// ADD RIDE
 router.post("/rides", async (req, res) => {
   try {
-    const { ride_name, description, capacity, price } = req.body;
-
-    const newRide = new Ride({
-      ride_name,
-      description,
-      capacity,
-      price,
+    const ride = new Ride({
+      ride_name: req.body.ride_name,
+      description: req.body.description,
+      capacity: req.body.capacity,
+      
       status: "Open"
     });
 
-    await newRide.save();
-    res.status(201).json(newRide);
+    await ride.save();
 
-  } catch (error) {
-    console.error("Add Ride Error:", error);
+    io.emit("adminUpdated");
+
+    res.json(ride);
+  } catch {
     res.status(500).json({ message: "Server Error" });
   }
 });
 
-// 3️⃣ Delete Ride
+// UPDATE RIDE (ONLY ONE ✅)
+router.put("/rides/:id", async (req, res) => {
+  try {
+    const ride = await Ride.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body }, // ✅ important
+      {
+        returnDocument: "after", // ✅ replaces deprecated "new"
+        runValidators: false     // ✅ prevents required field crash
+      }
+    );
+
+    io.emit("adminUpdated");
+
+    res.json(ride);
+  } catch (err) {
+    console.error(err); // 🔥 ADD THIS
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// DELETE RIDE
 router.delete("/rides/:id", async (req, res) => {
   try {
     await Ride.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: "Ride Deleted Successfully" });
 
-  } catch (error) {
-    console.error("Delete Ride Error:", error);
+    io.emit("adminUpdated");
+
+    res.json({ message: "Ride deleted" });
+  } catch {
     res.status(500).json({ message: "Server Error" });
   }
 });
 
-// 4️⃣ Toggle Ride Status (Open/Closed)
+
+// TOGGLE STATUS
 router.put("/rides/:id/toggle", async (req, res) => {
   try {
     const ride = await Ride.findById(req.params.id);
 
-    if (!ride) {
-      return res.status(404).json({ message: "Ride not found" });
-    }
+    if (!ride) return res.status(404).json({ message: "Not found" });
 
     ride.status = ride.status === "Open" ? "Closed" : "Open";
     await ride.save();
 
-    res.status(200).json(ride);
+    io.emit("adminUpdated");
 
-  } catch (error) {
-    console.error("Toggle Ride Error:", error);
+    res.json(ride);
+  } catch {
     res.status(500).json({ message: "Server Error" });
   }
 });
-// 5️⃣ Update Ride (Edit Ride)
-router.put("/rides/:id", async (req, res) => {
+router.put("/rides/:id/status", async (req, res) => {
   try {
-    const { ride_name, description, capacity, price } = req.body;
+    const { status } = req.body;
 
-    const updatedRide = await Ride.findByIdAndUpdate(
+    const ride = await Ride.findByIdAndUpdate(
       req.params.id,
-      {
-        ride_name,
-        description,
-        capacity,
-        price
-      },
+      { status },
       { new: true }
     );
 
-    if (!updatedRide) {
-      return res.status(404).json({ message: "Ride not found" });
-    }
+    io.emit("adminUpdated");
 
-    res.status(200).json(updatedRide);
+    res.json(ride);
+  } catch (err) {
+    res.status(500).json({ message: "Status update failed" });
+  }
+});
 
-  } catch (error) {
-    console.error("Update Ride Error:", error);
+/* ===========================
+        FOOD
+=========================== */
+
+// GET ALL FOOD
+router.get("/foods", async (req, res) => {
+  try {
+    const foods = await Food.find();
+    res.json(foods);
+  } catch {
     res.status(500).json({ message: "Server Error" });
   }
 });
-// 6️⃣ Revenue By Date (For Chart)
+
+// ADD FOOD
+router.post("/foods", async (req, res) => {
+  try {
+    const food = new Food(req.body);
+    await food.save();
+
+    io.emit("adminUpdated");
+
+    res.json(food);
+  } catch {
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// UPDATE FOOD
+router.put("/foods/:id", async (req, res) => {
+  try {
+    const food = await Food.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+
+    io.emit("adminUpdated");
+
+    res.json(food);
+  } catch {
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// DELETE FOOD
+router.delete("/foods/:id", async (req, res) => {
+  try {
+    await Food.findByIdAndDelete(req.params.id);
+
+    io.emit("adminUpdated");
+
+    res.json({ message: "Food deleted" });
+  } catch {
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+/* ===========================
+        BOOKINGS
+=========================== */
+
+// GET BOOKINGS
+router.get("/bookings", async (req, res) => {
+  try {
+    const bookings = await Booking.find()
+      .populate("user", "name email")
+      .populate("ride", "ride_name")
+      .sort({ createdAt: -1 });
+
+    res.json(bookings);
+  } catch {
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// UPDATE BOOKING STATUS
+router.put("/bookings/:id", async (req, res) => {
+  try {
+    const booking = await Booking.findByIdAndUpdate(
+      req.params.id,
+      { status: req.body.status },
+      { new: true }
+    );
+
+    io.emit("adminUpdated");
+
+    res.json(booking);
+  } catch {
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+/* ===========================
+        REVENUE CHART
+=========================== */
+
 router.get("/revenue-chart", async (req, res) => {
   try {
-    const revenueData = await Booking.aggregate([
+    const data = await Booking.aggregate([
       {
         $group: {
           _id: "$booking_date",
@@ -163,11 +302,10 @@ router.get("/revenue-chart", async (req, res) => {
       { $sort: { _id: 1 } }
     ]);
 
-    res.status(200).json(revenueData);
-
-  } catch (error) {
-    console.error("Revenue Chart Error:", error);
+    res.json(data);
+  } catch {
     res.status(500).json({ message: "Server Error" });
   }
 });
+
 module.exports = router;
