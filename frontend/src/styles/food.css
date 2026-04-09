@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+
+*{
+  font-family: 'Outfit', sans-serif !important;
+}
+
 /* PAGE */
 
 .food-page{
@@ -5,7 +11,7 @@ padding:40px;
 background:linear-gradient(135deg,#050816,#0a0f2c);
 min-height:100vh;
 color:white;
-font-family:"Poppins",sans-serif;
+font-family:"Outfit",sans-serif;
 }
 
 .food-title{
@@ -169,6 +175,7 @@ cursor:pointer;
 font-size:16px;
 }
 
+
 /* QUANTITY */
 
 .cart-controls{
@@ -185,6 +192,8 @@ background:#1c2147;
 color:white;
 border-radius:6px;
 cursor:pointer;
+margin: 10px;
+border-radius: 50%;
 }
 
 .cart-controls span{

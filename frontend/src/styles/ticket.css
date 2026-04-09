@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+
+*{
+  font-family: 'Outfit', sans-serif !important;
+}
+
 /* ============================ */
 /* PAGE */
 /* ============================ */
@@ -176,6 +182,29 @@
   color:#ff9f43;
   font-weight:600;
   margin-top:6px;
+}
+.qr-section{
+  margin-top:20px;
+  padding:15px;
+  border-radius:16px;
+  text-align:center;
+
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(10px);
+}
+
+.qr-image{
+  width:180px;
+  height:180px;
+  margin:10px 0;
+  border-radius:12px;
+  background:white;
+  padding:10px;
+}
+
+.qr-note{
+  font-size:13px;
+  color:#bbb;
 }
 
 /* ============================ */

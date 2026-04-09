@@ -3,6 +3,7 @@ import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import "../../styles/food.css";
 import toast from "react-hot-toast";
+import Swal from "sweetalert2";
 
 interface FoodItem {
   _id: string;
@@ -122,7 +123,11 @@ export function FoodOrdering() {
     const userData = localStorage.getItem("user");
 
     if (!userData) {
-      alert("Please login first");
+       Swal.fire({
+        icon: "warning",
+        title: "Login Required",
+        text: "Please login first"
+      });
       return;
     }
 
@@ -146,7 +151,11 @@ toast.success("🎉Order placed successfully!");
 
     } catch {
 
-      alert("Order failed");
+       Swal.fire({
+        icon: "warning",
+        title: "order failed",
+        text: "Please try again"
+      });
 
     }
 
@@ -311,8 +320,7 @@ toast.success("🎉Order placed successfully!");
           >
             Place Order
           </motion.button>
-
-          {qrCode && (
+{/*  {qrCode && (
 
             <div className="qr-section">
 
@@ -322,7 +330,8 @@ toast.success("🎉Order placed successfully!");
 
             </div>
 
-          )}
+          )}*/}
+         
 
         </div>
 

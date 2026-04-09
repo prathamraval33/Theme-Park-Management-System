@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+
+*{
+  font-family: 'Outfit', sans-serif !important;
+}
+
 .home{
 padding:20px;
 background:linear-gradient(135deg,#050816,#0a0f2c);
@@ -7,6 +13,7 @@ color:white;
 
 .section{
 margin-top:40px;
+
 }
 
 .section-header{
@@ -45,9 +52,10 @@ border-radius:16px;
 overflow:hidden;
 border:1px solid rgba(255,255,255,0.08);
 transition:0.3s;
-height:380px;
+height: fit-content;
 display:flex;
 flex-direction:column;
+
 }
 
 .card:hover{

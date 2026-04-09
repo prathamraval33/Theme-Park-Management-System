@@ -5,6 +5,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "../../styles/ticket.css";
 import toast from "react-hot-toast";
+import Swal from "sweetalert2";
 interface Plan {
   title: string;
   price: number;
@@ -17,12 +18,15 @@ interface CartItem {
   qty: number;
 }
 
+
+
 export function TicketBooking() {
 
   const [visitDate, setVisitDate] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [qrCode, setQrCode] = useState("");
 
   const plans: Plan[] = [
     { title: "Kids Regular", price: 1000, features: ["All Rides", "Limited Food"] },
@@ -70,7 +74,11 @@ export function TicketBooking() {
   const userData = localStorage.getItem("user");
 
   if (!userData) {
-    alert("Please login first");
+    Swal.fire({
+  icon: "warning",
+  title: "Login Required",
+  text: "Please login first"
+});
     return;
   }
 
@@ -82,12 +90,20 @@ export function TicketBooking() {
   }
 
   if (!visitDate) {
-    alert("Select date");
+    Swal.fire({
+  icon: "warning",
+  title: "Select Date",
+  text: "Please choose a visit date"
+});
     return;
   }
 
   if (cart.length === 0) {
-    alert("Select tickets");
+     Swal.fire({
+  icon: "warning",
+  title: "Select Tickets",
+  text: "Please choose at least one ticket"
+});
     return;
   }
 
@@ -95,20 +111,30 @@ export function TicketBooking() {
 
   try {
 
-    const res = await axios.post(
-      "http://localhost:5000/api/booking/create",
-      {
-        email: user.email, // 🔥 REQUIRED
-        booking_date: visitDate,
-        items: cart.map(item => ({
-          title: item.title,
-          qty: item.qty,
-          price: item.price
-        })),
-        total_amount: total,
-        payment_status: "Paid" // 🔥 REQUIRED
-      }
-    );
+    const res = await axios.post("http://localhost:5000/api/booking/create", {
+  email: user.email,
+  booking_date: visitDate,
+  items: cart.map(item => ({
+    title: item.title,
+    qty: item.qty,
+    price: item.price
+  })),
+  total_amount: total,
+  payment_status: "Paid"
+});
+
+// ✅ SAVE QR
+setQrCode(res.data.qr_code);
+
+// ✅ SWEET ALERT (added below)
+
+
+Swal.fire({
+  title: "Booking Successful 🎉",
+  text: "Your ticket has been booked!",
+  icon: "success",
+  confirmButtonColor: "#ff7e5f"
+});
 
     console.log("SUCCESS:", res.data);
 
@@ -121,11 +147,16 @@ export function TicketBooking() {
 
     console.log("ERROR:", err.response?.data);
 
-    alert(err.response?.data?.message || "Booking failed");
+   Swal.fire({
+  icon: "error",
+  title: "Booking Failed",
+  text: err.response?.data?.message || "Something went wrong"
+});
 
   } finally {
     setLoading(false);
   }
+  
 };
   return (
 
@@ -214,6 +245,18 @@ export function TicketBooking() {
                 <span>Total Amount</span>
                 <span>₹{total}</span>
               </div>
+              {/* 🔥 QR DISPLAY */}
+ {qrCode && (
+
+            <div className="qr-section">
+
+              <h3>Receipt</h3>
+
+              <img src={qrCode} />
+
+            </div>
+
+          )}
 
             </div>
 

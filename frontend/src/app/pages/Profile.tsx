@@ -308,10 +308,10 @@ export function Profile() {
                 <div>
                   <p><strong>Date:</strong> {new Date(b.booking_date).toDateString()}</p>
                   <p><strong>Total:</strong> ₹{b.total_amount}</p>
-
-                  <span className={`status ${b.payment_status}`}>
+{/*<span className={`status ${b.payment_status}`}>
                     {b.payment_status}
-                  </span>
+                  </span>*/}
+                  
 
                   <button
                     className="download-btn"

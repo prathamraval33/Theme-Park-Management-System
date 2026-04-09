@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+
+*{
+  font-family: 'Outfit', sans-serif !important;
+}
+
 /* ================= PAGE ================= */
 
 .profile-page{
@@ -5,7 +11,7 @@ padding:40px;
 background:linear-gradient(135deg,#050816,#0a0f2c);
 min-height:100vh;
 color:white;
-font-family:"Poppins",sans-serif;
+font-family:"Outfit ",sans-serif;
 position:relative;
 }
 
@@ -237,7 +243,7 @@ color:#00ffae;
 /* QR */
 
 .qr-image{
-width:90px;
+width:fit-content;
 background:white;
 padding:5px;
 border-radius:8px;

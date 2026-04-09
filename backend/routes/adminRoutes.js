@@ -259,10 +259,7 @@ router.delete("/foods/:id", async (req, res) => {
 router.get("/bookings", async (req, res) => {
   try {
     const bookings = await Booking.find()
-      .populate("user", "name email")
-      .populate("ride", "ride_name")
-      .sort({ createdAt: -1 });
-
+  .sort({ createdAt: -1 });
     res.json(bookings);
   } catch {
     res.status(500).json({ message: "Server Error" });

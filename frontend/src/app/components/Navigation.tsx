@@ -52,7 +52,7 @@ export function Navigation() {
           <span onClick={() => navigate("/")}>Home</span>
           <span onClick={() => navigate("/rides")}>Rides</span>
           <span onClick={() => navigate("/tickets")}>Tickets</span>
-          <span onClick={() => navigate("/queue")}>Queue</span>
+          
           <span onClick={() => navigate("/food")}>Food</span>
           <span onClick={() => navigate("/contact")}>Contact</span>
 

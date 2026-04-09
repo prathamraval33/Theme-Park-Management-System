@@ -1,6 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
 
+*{
+  font-family: 'Outfit', sans-serif !important;
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 
 /* ===== BASE ===== */
 .admin-page {
@@ -75,7 +80,7 @@
 .stat-card-value {
   font-size: 28px;
   font-weight: 800;
-  font-family: "Space Mono", monospace;
+  font-family: "Outfit", monospace;
   color: white;
   line-height: 1;
 }
@@ -126,7 +131,7 @@
 .chart-bar-label {
   font-size: 10px;
   color: rgba(255,255,255,0.35);
-  font-family: "Space Mono", monospace;
+  font-family: "Outfit", monospace;
   white-space: nowrap;
 }
 
@@ -252,7 +257,7 @@
   background: rgba(255,255,255,0.06);
   color: white;
   border: 1px solid rgba(255,255,255,0.1);
-  font-family: "Space Mono", monospace;
+  font-family: "Outfit", monospace;
   font-size: 13px;
   width: 90px;
   transition: all 0.2s;
@@ -447,7 +452,7 @@
 .admin-logo .logo-icon { font-size: 24px; }
 
 .admin-logo .logo-text {
-  font-family: "Space Mono", monospace;
+  font-family: "Outfit", monospace;
   font-size: 17px;
   font-weight: 700;
   background: linear-gradient(90deg, #00ffae, #ff7a18);
