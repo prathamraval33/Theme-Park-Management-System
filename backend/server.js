@@ -35,6 +35,7 @@ app.use("/api/reviews", require("./routes/reviewRoute"));
 app.use("/api/user", require("./routes/userRoutes"));
 app.use("/api/queue", require("./routes/queueRoutes"));
 
+
 /* ================= SOCKET SETUP ================= */
 
 // 🔥 CREATE HTTP SERVER

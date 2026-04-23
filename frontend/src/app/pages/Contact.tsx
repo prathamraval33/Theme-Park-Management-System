@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
 import "../../styles/contact.css";
+import Swal from "sweetalert2";
 
 export function Contact() {
 
@@ -77,7 +78,11 @@ target.style.setProperty("--y", `${y}%`);
 const submitReview = async ()=>{
 
 if(!review){
-alert("Please write review");
+Swal.fire({
+  icon: "warning",
+  title: "Review not found",
+  text: "Please login first"
+});
 return;
 }
 

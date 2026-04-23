@@ -13,7 +13,7 @@ interface FoodItem {
   category: string;
 }
 
-interface CartItem {
+type CartItem = {
   _id: string;
   food_name: string;
   price: number;
