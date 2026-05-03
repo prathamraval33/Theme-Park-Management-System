@@ -27,14 +27,17 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/rides", require("./routes/rideRoute"));
-app.use("/api/booking", require("./routes/bookingRoute"));
+
 app.use("/api/foods", require("./routes/foodRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/foodorders", require("./routes/foodOrderRoute"));
 app.use("/api/reviews", require("./routes/reviewRoute"));
 app.use("/api/user", require("./routes/userRoutes"));
 app.use("/api/queue", require("./routes/queueRoutes"));
+// ✅ make sure BOTH lines exist in server.js
 
+app.use("/api/booking",  require("./routes/bookingRoute"));   // customer
+app.use("/api/bookings", require("./routes/bookingRoutes"));  // staff
 
 /* ================= SOCKET SETUP ================= */
 

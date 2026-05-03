@@ -18,6 +18,7 @@ import { RideManagement } from "../pages/admin/RideManagement";
 import { FoodManagement } from "../pages/admin/FoodManagement";
 import { UserManagement } from "../pages/admin/UserManagement";
 import { RideStaffDashboard } from "../pages/ridestaff/RideStaffDashboard";
+import { TicketStaff } from "../pages/ticketstaff/TicketStaff";
 import { FoodStaff } from "../pages/foodstaff/FoodStaff";
 import VerifyOTP from "../pages/VerifyOTP";
 
@@ -84,6 +85,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={["FoodStaff"]}>
             <FoodStaff />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "ticket-staff",
+        element: (
+          <ProtectedRoute allowedRoles={["TicketStaff"]}>
+            <TicketStaff />
           </ProtectedRoute>
         ),
       },
